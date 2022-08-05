@@ -3,5 +3,11 @@
     "workspaces": [
         "apps/*",
         "packages/*"
-    ]
+    ],
+    "devDependencies": {
+        "turbo": "^1.4.2"
+    },
+    "dependencies": {
+        "nps": "^5.10.0"
+    }
 }
