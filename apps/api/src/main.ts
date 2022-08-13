@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('oscar-ox api')
     .setDescription('API description')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
