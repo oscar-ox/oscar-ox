@@ -50,6 +50,7 @@ export class ProductionsController {
   @Patch(':id')
   @UseGuards(JwtGuard)
   @ApiCreatedResponse({ type: ProductionEntity })
+  @ApiBearerAuth()
   update(
     @Param('id') id: string,
     @Body() updateProductionDto: UpdateProductionDto,
@@ -60,6 +61,7 @@ export class ProductionsController {
   @Delete(':id')
   @UseGuards(JwtGuard)
   @ApiOkResponse({ type: [ProductionEntity] })
+  @ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.productionsService.remove(id);
   }

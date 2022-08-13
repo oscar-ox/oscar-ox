@@ -7,8 +7,8 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 import * as bcrypt from 'bcrypt';
 
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { RegisterAuthDto } from './dto/register-auth.dto';
+import { LoginAuthDto } from './dto/login-auth.dto';
 
 const saltOrRounds = 10;
 
@@ -20,7 +20,7 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterAuthDto) {
     // gnerate the password hash
     const hash = await bcrypt.hash(dto.password, saltOrRounds);
 
@@ -28,6 +28,8 @@ export class AuthService {
       // save the new user in the db
       const user = await this.prisma.user.create({
         data: {
+          firstName: dto.firstName,
+          lastName: dto.lastName,
           email: dto.email,
           hash: hash,
         },
@@ -46,7 +48,7 @@ export class AuthService {
     }
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginAuthDto) {
     // find user by email
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
