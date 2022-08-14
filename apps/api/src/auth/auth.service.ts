@@ -7,10 +7,8 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 import * as bcrypt from 'bcrypt';
 
-import { RegisterAuthDto } from './dto/register-auth.dto';
-import { LoginAuthDto } from './dto/login-auth.dto';
-
-const saltOrRounds = 10;
+import { LocalRegisterAuthDto, LocalLoginAuthDto } from './dto';
+import { AuthEntity } from './entity';
 
 @Injectable()
 export class AuthService {
@@ -20,12 +18,12 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async register(dto: RegisterAuthDto) {
-    // gnerate the password hash
-    const hash = await bcrypt.hash(dto.password, saltOrRounds);
+  async localRegister(dto: LocalRegisterAuthDto): Promise<AuthEntity> {
+    // hash the password
+    const hash = await bcrypt.hash(dto.password, 10);
 
     try {
-      // save the new user in the db
+      // create the user in the database
       const user = await this.prisma.user.create({
         data: {
           firstName: dto.firstName,
@@ -35,56 +33,70 @@ export class AuthService {
         },
       });
 
-      // return the new user
-      return this.signTocken(user.id, user.email);
+      // return the two tokens
+      return this.signTockens(user.id, user.email);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
+          // check if the email has already been used
           throw new ForbiddenException('Email already taken');
         }
       }
 
+      // if the error is not handled
       throw error;
     }
   }
 
-  async login(dto: LoginAuthDto) {
-    // find user by email
+  async localLogin(dto: LocalLoginAuthDto) {
+    // find the user in the database using email
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
-    // if user does not exist throw exceptiom
+    // check if a user was found
     if (!user) throw new ForbiddenException('Credentials incorrect');
 
-    //compare passwor
+    // check if the password is valid
     const passwordValid = await bcrypt.compare(dto.password, user.hash);
 
-    // if password incorrect thow exceptopms
+    // throw an error if the password is not valid
     if (!passwordValid) throw new ForbiddenException('Credentials incorrect');
 
-    // send back the user
-    return this.signTocken(user.id, user.email);
+    // return the two tokens
+    return this.signTockens(user.id, user.email);
   }
 
-  async signTocken(
-    id: string,
-    email: string,
-  ): Promise<{ access_token: string }> {
+  logout() {}
+
+  refresh() {}
+
+  async signTockens(id: string, email: string): Promise<AuthEntity> {
+    // form the payload to be stored in the tokens
     const payload = {
       sub: id,
       email,
     };
 
+    // get the secret used to sign the tokens
     const secret = this.config.get('JWT_SECRET');
 
-    const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
-      secret: secret,
-    });
+    // form both tokens required
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwt.signAsync(payload, {
+        expiresIn: '15m',
+        secret: secret,
+      }),
+      this.jwt.signAsync(payload, {
+        expiresIn: '7d',
+        secret: secret,
+      }),
+    ]);
 
+    // return the two tokens
     return {
-      access_token: token,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 }

@@ -2,24 +2,32 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
-import { RegisterAuthDto } from './dto/register-auth.dto';
-import { LoginAuthDto } from './dto/login-auth.dto';
-import { AuthEntity } from './entities/auth.entity';
+import { LocalRegisterAuthDto, LocalLoginAuthDto } from './dto';
+import { AuthEntity } from './entity';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
+  @Post('/local/register')
   @ApiOkResponse({ type: AuthEntity })
-  register(@Body() registerAuthDto: RegisterAuthDto) {
-    return this.authService.register(registerAuthDto);
+  localRegister(
+    @Body() registerAuthDto: LocalRegisterAuthDto,
+  ): Promise<AuthEntity> {
+    return this.authService.localRegister(registerAuthDto);
   }
 
-  @Post('login')
+  @Post('/local/login')
   @ApiOkResponse({ type: AuthEntity })
-  login(@Body() loginAuthDto: LoginAuthDto) {
-    return this.authService.login(loginAuthDto);
+  localLogin(@Body() loginAuthDto: LocalLoginAuthDto): Promise<AuthEntity> {
+    return this.authService.localLogin(loginAuthDto);
   }
+
+  @Post('/logout')
+  logout() {}
+
+  @Post('/refresh')
+  @ApiOkResponse({ type: AuthEntity })
+  refresh() {}
 }
