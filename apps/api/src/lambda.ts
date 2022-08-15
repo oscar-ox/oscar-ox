@@ -15,7 +15,7 @@ const bootstrapServer = async (): Promise<Server> => {
   const adapter = new ExpressAdapter(expressApp);
   const app = await NestFactory.create(AppModule, adapter);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use(cookieParser());
 
   app.enableCors();
