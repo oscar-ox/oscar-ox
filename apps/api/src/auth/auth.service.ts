@@ -33,8 +33,11 @@ export class AuthService {
         },
       });
 
+      // create the new session in the database
+      const sessionId = await this.createSession(user.id);
+
       // return the two tokens
-      return this.signTockens(user.id, user.email);
+      return this.signTokens(user.id, user.email, sessionId);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -63,33 +66,88 @@ export class AuthService {
     // throw an error if the password is not valid
     if (!passwordValid) throw new ForbiddenException('Credentials incorrect');
 
+    // create the new session in the database
+    const sessionId = await this.createSession(user.id);
+
     // return the two tokens
-    return this.signTockens(user.id, user.email);
+    return this.signTokens(user.id, user.email, sessionId);
   }
 
-  logout() {}
+  async logout(sessionId: string) {
+    // end the session
+    this.endSession(sessionId);
+  }
 
-  refresh() {}
+  async refresh(sessionId: string) {
+    // find the session in the database
+    const session = await this.prisma.session.findUnique({
+      where: { id: sessionId },
+      include: {
+        user: true,
+      },
+    });
 
-  async signTockens(id: string, email: string): Promise<AuthEntity> {
-    // form the payload to be stored in the tokens
-    const payload = {
-      sub: id,
+    // check if the session actually exists
+    if (!session) throw new ForbiddenException();
+
+    // check if the session has been revoked
+    if (session.revoked) throw new ForbiddenException('Session revoked');
+
+    // update the session
+    this.updateSession(sessionId);
+
+    // return the two tokens
+    return this.signTokens(session.user.id, session.user.email, session.id);
+  }
+
+  async createSession(userId: string): Promise<string> {
+    const session = await this.prisma.session.create({
+      data: { userId: userId },
+    });
+
+    return session.id;
+  }
+
+  async updateSession(id: string) {
+    await this.prisma.session.update({
+      where: { id: id },
+      data: { updatedAt: new Date() },
+    });
+  }
+
+  async endSession(id: string) {
+    await this.prisma.session.update({
+      where: { id: id },
+      data: { revoked: true },
+    });
+  }
+
+  async signTokens(
+    userId: string,
+    email: string,
+    sessionId: string,
+  ): Promise<AuthEntity> {
+    // form the access token payload
+    const accessTokenPayload = {
+      sub: userId,
       email,
+      sessionId: sessionId,
     };
 
-    // get the secret used to sign the tokens
-    const secret = this.config.get('JWT_SECRET');
+    // form refresh token payload
+    const refreshTokenPayload = {
+      sub: sessionId,
+    };
 
     // form both tokens required
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwt.signAsync(payload, {
+      this.jwt.signAsync(accessTokenPayload, {
         expiresIn: '15m',
-        secret: secret,
+        secret: this.config.get('JWT_SECRET'),
       }),
-      this.jwt.signAsync(payload, {
+      this.jwt.signAsync(refreshTokenPayload, {
         expiresIn: '7d',
-        secret: secret,
+        secret: this.config.get('JWT_REFRESH_SECRET'),
       }),
     ]);
 

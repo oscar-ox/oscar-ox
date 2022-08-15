@@ -19,6 +19,19 @@ model User {
   lastName  String?
   email     String  @unique
   hash      String
+
+  session Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  revoked Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Production {
