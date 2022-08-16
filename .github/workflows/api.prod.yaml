@@ -1,7 +1,5 @@
 name: Deploy API Prod
 
-runs-on: self-hosted
-
 on:
   push:
     branches: [prod]
@@ -13,7 +11,7 @@ on:
 jobs:
   deploy:
     name: deploy
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: prod
     strategy:
       matrix:
