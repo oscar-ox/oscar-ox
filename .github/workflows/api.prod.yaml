@@ -1,12 +1,8 @@
-name: Deploy master branch
+name: Deploy API Prod
 
 on:
   push:
-    branches: [main]
-    paths:
-      - "apps/api/**"
-  pull_request:
-    branches: [master]
+    branches: [prod]
     paths:
       - "apps/api/**"
 
@@ -16,6 +12,7 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
+    environment: prod
     strategy:
       matrix:
         node-version: [16.x]
