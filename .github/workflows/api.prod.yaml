@@ -1,5 +1,7 @@
 name: Deploy API Prod
 
+runs-on: self-hosted
+
 on:
   push:
     branches: [prod]

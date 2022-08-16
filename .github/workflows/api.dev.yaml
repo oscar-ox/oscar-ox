@@ -1,5 +1,7 @@
 name: Deploy API Dev
 
+runs-on: self-hosted
+
 on:
   push:
     branches: [dev]
