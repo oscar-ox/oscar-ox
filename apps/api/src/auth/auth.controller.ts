@@ -9,7 +9,13 @@ import {
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
-import { LocalRegisterAuthDto, LocalLoginAuthDto } from './dto';
+import {
+  LocalRegisterAuthDto,
+  LocalLoginAuthDto,
+  EmailRegisterAuthDto,
+  EmailLoginAuthDto,
+  EmailVerifyAuthDto,
+} from './dto';
 import { AuthEntity } from './entity';
 import { GetUser } from './decorator';
 import { JwtRefreshGuard } from './guard';
@@ -22,18 +28,44 @@ export class AuthController {
   @Post('/local/register')
   @ApiOkResponse({ type: AuthEntity })
   localRegister(
-    @Body() registerAuthDto: LocalRegisterAuthDto,
+    @Body() localRegisterAuthDto: LocalRegisterAuthDto,
   ): Promise<AuthEntity> {
-    return this.authService.localRegister(registerAuthDto);
+    return this.authService.localRegister(localRegisterAuthDto);
   }
 
   @Post('/local/login')
   @ApiOkResponse({ type: AuthEntity })
   async localLogin(
     @Res({ passthrough: true }) response: Response,
-    @Body() loginAuthDto: LocalLoginAuthDto,
+    @Body() localLoginAuthDto: LocalLoginAuthDto,
   ): Promise<AuthEntity> {
-    const tokens = await this.authService.localLogin(loginAuthDto);
+    const tokens = await this.authService.localLogin(localLoginAuthDto);
+
+    response.cookie('refreshToken', tokens.refreshToken, {
+      sameSite: 'strict',
+      httpOnly: true,
+      secure: true,
+    });
+
+    return tokens;
+  }
+
+  @Post('/email/register')
+  emailRegister(@Body() emailRegisterAuthDto: EmailRegisterAuthDto) {
+    return this.authService.emailRegister(emailRegisterAuthDto);
+  }
+
+  @Post('/email/login')
+  emailLogin(@Body() emailLoginAuthDto: EmailLoginAuthDto) {
+    return this.authService.emailLogin(emailLoginAuthDto);
+  }
+
+  @Post('/email/verify')
+  async emailVerify(
+    @Res({ passthrough: true }) response: Response,
+    @Body() emailVerifyAuthDto: EmailVerifyAuthDto,
+  ): Promise<AuthEntity> {
+    const tokens = await this.authService.emailVerify(emailVerifyAuthDto);
 
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
@@ -49,9 +81,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiCookieAuth()
   logout(@GetUser('sessionId') sessionId: string) {
-    this.authService.logout(sessionId);
-
-    return { sessionId: sessionId };
+    return this.authService.logout(sessionId);
   }
 
   @Post('/refresh')
