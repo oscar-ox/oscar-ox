@@ -14,9 +14,10 @@ import {
   LocalLoginAuthDto,
   EmailRegisterAuthDto,
   EmailLoginAuthDto,
-  EmailVerifyAuthDto,
+  EmailStartAuthDto,
 } from './dto';
-import { AuthEntity } from './entity';
+import { AuthEntity, UserEntity } from './entity';
+import { Session, User } from 'generated/client';
 
 @Injectable()
 export class AuthService {
@@ -43,12 +44,12 @@ export class AuthService {
       });
 
       // create the new session in the database
-      const sessionId = await this.createSession(user.id);
-
-      this.mail.sendEmail();
+      const session = await this.prisma.session.create({
+        data: { userId: user.id, started: true },
+      });
 
       // return the two tokens
-      return this.signTokens(user.id, user.email, sessionId);
+      return this.signAuthTokens(user.id, session.id);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -78,140 +79,172 @@ export class AuthService {
     if (!passwordValid) throw new ForbiddenException('Credentials incorrect');
 
     // create the new session in the database
-    const sessionId = await this.createSession(user.id);
+    const session = await this.prisma.session.create({
+      data: { userId: user.id, started: true },
+    });
 
     // return the two tokens
-    return this.signTokens(user.id, user.email, sessionId);
+    return this.signAuthTokens(user.id, session.id);
   }
 
-  async emailRegister(dto: EmailRegisterAuthDto) {
-    try {
-      // create the user in the database
-      const user = await this.prisma.user.create({
-        data: {
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          email: dto.email,
-          hash: 'null',
-        },
+  async emailStart(dto: EmailStartAuthDto): Promise<UserEntity> {
+    // find the user in the database using email
+    let user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    // check if a user was found
+    if (user) {
+      // check if the account is ghost
+      if (!user.ghost) throw new ForbiddenException('Email already taken');
+
+      // check if the account is banned
+      if (user.banned) throw new ForbiddenException('Email banned');
+
+      // create the date objects
+      const maxLastSent = new Date();
+      maxLastSent.setMinutes(maxLastSent.getMinutes() - 10);
+
+      // check if the email has been sent recently
+      if (user.lastSent > maxLastSent)
+        throw new ForbiddenException('Please wait to send another email');
+
+      // update the last sent value
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { lastSent: new Date() },
       });
-
-      // form the email tokemn
-      const token = await this.signEmailToken(user.id);
-
-      // send an email with the token
-      this.mail.sendToken(user.email, token);
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          // check if the email has already been used
-          throw new ForbiddenException('Email already taken');
+    } else {
+      try {
+        // create the user in the database (ghost)
+        user = await this.prisma.user.create({
+          data: {
+            email: dto.email,
+            lastSent: new Date(),
+          },
+        });
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code === 'P2002') {
+            // check if the email has already been used
+            throw new ForbiddenException('Email already taken');
+          }
         }
-      }
 
-      // if the error is not handled
-      throw error;
+        // if the error is not handled
+        throw error;
+      }
     }
+
+    // form the email register token
+    const token = await this.signEmailRegisterToken(user.id);
+
+    // send an email with the token %%TEMP%%
+    this.mail.sendToken(user.email, token);
+
+    // return the user
+    return { id: user.id, email: user.email };
   }
 
-  async emailLogin(dto: EmailLoginAuthDto) {
+  async emailRegister(
+    dto: EmailRegisterAuthDto,
+    user: User,
+  ): Promise<AuthEntity> {
+    // check that the account is actually a ghost
+    if (!user.ghost) throw new ForbiddenException('Account already registered');
+
+    // check if the account is banned
+    if (user.banned) throw new ForbiddenException('Email banned');
+
+    // complete the user account registration
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { firstName: dto.firstName, lastName: dto.lastName, ghost: false },
+    });
+
+    // create the new session in the database (not started)
+    const session = await this.prisma.session.create({
+      data: { userId: user.id, started: true },
+    });
+
+    // return the two tokens
+    return this.signAuthTokens(user.id, session.id);
+  }
+
+  async emailLogin(dto: EmailLoginAuthDto): Promise<UserEntity> {
     // find the user in the database using email
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
     // check if a user was found
-    if (!user) throw new ForbiddenException('Credentials incorrect');
+    if (!user) throw new ForbiddenException('Account not registered');
 
-    // form the email tokemn
-    const token = await this.signEmailToken(user.id);
+    // check that the account is actually a ghost
+    if (user.ghost) throw new ForbiddenException('Account not registered');
+
+    // check if the account is banned
+    if (user.banned) throw new ForbiddenException('Email banned');
+
+    // create the new session in the database
+    const session = await this.prisma.session.create({
+      data: { userId: user.id },
+    });
+
+    // form the email verify token
+    const token = await this.signEmailVerifyToken(session.id);
 
     // send an email with the token
     this.mail.sendToken(user.email, token);
+
+    // return the user
+    return { id: user.id, email: user.email };
   }
 
-  async emailVerify(dto: EmailVerifyAuthDto) {
-    const emailTokenPayload = await this.jwt.decode(
-      dto.emailToken,
-      this.config.get('JWT_EMAIL_SECRET'),
-    );
+  async emailVerify(session: Session) {
+    // check if the session has started
+    if (session.started)
+      throw new ForbiddenException('Session already started');
 
-    if (!emailTokenPayload)
-      throw new ForbiddenException('Credentials incorrect');
-
-    // find the user in the database using email
-    const user = await this.prisma.user.findUnique({
-      where: { id: emailTokenPayload.sub },
+    // update the session time + started
+    await this.prisma.session.update({
+      where: { id: session.id },
+      data: { started: true, updatedAt: new Date() },
     });
 
-    // check if a user was found
-    if (!user) throw new ForbiddenException('Credentials incorrect');
-
-    // create the new session in the database
-    const sessionId = await this.createSession(user.id);
-
     // return the two tokens
-    return this.signTokens(user.id, user.email, sessionId);
+    return this.signAuthTokens(session.userId, session.id);
   }
 
-  async logout(sessionId: string) {
+  async logout(session: Session) {
     // end the session
-    this.endSession(sessionId);
-  }
-
-  async refresh(sessionId: string) {
-    // find the session in the database
-    const session = await this.prisma.session.findUnique({
-      where: { id: sessionId },
-      include: {
-        user: true,
-      },
-    });
-
-    // check if the session actually exists
-    if (!session) throw new ForbiddenException();
-
-    // check if the session has been revoked
-    if (session.revoked) throw new ForbiddenException('Session revoked');
-
-    // update the session
-    this.updateSession(sessionId);
-
-    // return the two tokens
-    return this.signTokens(session.user.id, session.user.email, session.id);
-  }
-
-  async createSession(userId: string): Promise<string> {
-    const session = await this.prisma.session.create({
-      data: { userId: userId },
-    });
-
-    return session.id;
-  }
-
-  async updateSession(id: string) {
     await this.prisma.session.update({
-      where: { id: id },
-      data: { updatedAt: new Date() },
-    });
-  }
-
-  async endSession(id: string) {
-    await this.prisma.session.update({
-      where: { id: id },
+      where: { id: session.id },
       data: { revoked: true },
     });
   }
 
-  async signTokens(
-    userId: string,
-    email: string,
-    sessionId: string,
-  ): Promise<AuthEntity> {
+  async refresh(session: Session) {
+    // check if the session has been revoked
+    if (session.revoked) throw new ForbiddenException('Session revoked');
+
+    // check if the session has not started
+    if (!session.started) throw new ForbiddenException('Session not started');
+
+    // update the session time
+    await this.prisma.session.update({
+      where: { id: session.id },
+      data: { updatedAt: new Date() },
+    });
+
+    // return the two tokens
+    return this.signAuthTokens(session.userId, session.id);
+  }
+
+  async signAuthTokens(userId: string, sessionId: string): Promise<AuthEntity> {
     // form the access token payload
     const accessTokenPayload = {
       sub: userId,
-      email,
       sessionId: sessionId,
       type: 'at',
     };
@@ -241,17 +274,31 @@ export class AuthService {
     };
   }
 
-  async signEmailToken(userId: string): Promise<string> {
-    // form the email token payload
-    const emailTokenPayload = {
-      sub: userId,
-      type: 'et',
+  async signEmailRegisterToken(id: string): Promise<string> {
+    // form the generic token payload
+    const tokenPayload = {
+      sub: id,
+      type: 'ert',
     };
 
     // return the token created
-    return this.jwt.signAsync(emailTokenPayload, {
+    return this.jwt.signAsync(tokenPayload, {
       expiresIn: '10m',
-      secret: this.config.get('JWT_EMAIL_SECRET'),
+      secret: this.config.get('JWT_EMAIL_REGISTER_SECRET'),
+    });
+  }
+
+  async signEmailVerifyToken(id: string): Promise<string> {
+    // form the generic token payload
+    const tokenPayload = {
+      sub: id,
+      type: 'evt',
+    };
+
+    // return the token created
+    return this.jwt.signAsync(tokenPayload, {
+      expiresIn: '10m',
+      secret: this.config.get('JWT_EMAIL_VERIFY_SECRET'),
     });
   }
 }

@@ -17,10 +17,10 @@ export class MailService {
     });
   }
 
-  sendEmail() {
+  sendEmail(email: string) {
     const command = new SendEmailCommand({
       Destination: {
-        ToAddresses: ['test@gmail.com'],
+        ToAddresses: [email],
       },
       Message: {
         Body: {
@@ -47,17 +47,17 @@ export class MailService {
   sendToken(email: string, token: string) {
     const command = new SendEmailCommand({
       Destination: {
-        ToAddresses: ['test@gmail.com'],
+        ToAddresses: [email],
       },
       Message: {
         Body: {
           Html: {
             Charset: 'UTF-8',
-            Data: token + ' - ' + email,
+            Data: token,
           },
           Text: {
             Charset: 'UTF-8',
-            Data: token + ' - ' + email,
+            Data: token,
           },
         },
         Subject: {

@@ -14,11 +14,16 @@ import {
   LocalLoginAuthDto,
   EmailRegisterAuthDto,
   EmailLoginAuthDto,
-  EmailVerifyAuthDto,
+  EmailStartAuthDto,
 } from './dto';
-import { AuthEntity } from './entity';
+import { AuthEntity, UserEntity } from './entity';
 import { GetUser } from './decorator';
-import { JwtRefreshGuard } from './guard';
+import {
+  JwtEmailRegisterGuard,
+  JwtEmailVerifyGuard,
+  JwtRefreshGuard,
+} from './guard';
+import { Session, User } from 'generated/client';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -50,22 +55,54 @@ export class AuthController {
     return tokens;
   }
 
+  @Post('/email/start')
+  @ApiOkResponse({ type: UserEntity })
+  emailStart(
+    @Body() emailStartAuthDto: EmailStartAuthDto,
+  ): Promise<UserEntity> {
+    return this.authService.emailStart(emailStartAuthDto);
+  }
+
   @Post('/email/register')
-  emailRegister(@Body() emailRegisterAuthDto: EmailRegisterAuthDto) {
-    return this.authService.emailRegister(emailRegisterAuthDto);
+  @UseGuards(JwtEmailRegisterGuard)
+  @ApiOkResponse({ type: AuthEntity })
+  @ApiBearerAuth()
+  async emailRegister(
+    @Res({ passthrough: true }) response: Response,
+    @Body() emailRegisterAuthDto: EmailRegisterAuthDto,
+    @GetUser() user: User,
+  ): Promise<AuthEntity> {
+    const tokens = await this.authService.emailRegister(
+      emailRegisterAuthDto,
+      user,
+    );
+
+    response.cookie('refreshToken', tokens.refreshToken, {
+      sameSite: 'strict',
+      httpOnly: true,
+      secure: true,
+    });
+
+    return tokens;
   }
 
   @Post('/email/login')
-  emailLogin(@Body() emailLoginAuthDto: EmailLoginAuthDto) {
+  @ApiOkResponse({ type: UserEntity })
+  emailLogin(
+    @Body() emailLoginAuthDto: EmailLoginAuthDto,
+  ): Promise<UserEntity> {
     return this.authService.emailLogin(emailLoginAuthDto);
   }
 
   @Post('/email/verify')
+  @UseGuards(JwtEmailVerifyGuard)
+  @ApiOkResponse({ type: AuthEntity })
+  @ApiBearerAuth()
   async emailVerify(
     @Res({ passthrough: true }) response: Response,
-    @Body() emailVerifyAuthDto: EmailVerifyAuthDto,
+    @GetUser() session: Session,
   ): Promise<AuthEntity> {
-    const tokens = await this.authService.emailVerify(emailVerifyAuthDto);
+    const tokens = await this.authService.emailVerify(session);
 
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
@@ -78,10 +115,9 @@ export class AuthController {
 
   @Post('/logout')
   @UseGuards(JwtRefreshGuard)
-  @ApiBearerAuth()
   @ApiCookieAuth()
-  logout(@GetUser('sessionId') sessionId: string) {
-    return this.authService.logout(sessionId);
+  logout(@GetUser() session: Session) {
+    return this.authService.logout(session);
   }
 
   @Post('/refresh')
@@ -90,9 +126,9 @@ export class AuthController {
   @ApiCookieAuth()
   async refresh(
     @Res({ passthrough: true }) response: Response,
-    @GetUser('id') id: string,
+    @GetUser() session: Session,
   ) {
-    const tokens = await this.authService.refresh(id);
+    const tokens = await this.authService.refresh(session);
 
     response.cookie('refreshToken', tokens.refreshToken, {
       expires: new Date(new Date().getTime() + 30 * 1000),
