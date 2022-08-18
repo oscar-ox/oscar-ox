@@ -11,7 +11,7 @@ on:
 jobs:
   deploy:
     name: deploy
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: dev
     strategy:
       matrix:
