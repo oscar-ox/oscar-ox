@@ -7,13 +7,9 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 export class MailService {
   private readonly ses: SESClient;
 
-  constructor(config: ConfigService) {
+  constructor() {
     this.ses = new SESClient({
       region: 'eu-west-1',
-      credentials: {
-        accessKeyId: config.get('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: config.get('AWS_SECRET_ACCESS_KEY'),
-      },
     });
   }
 
