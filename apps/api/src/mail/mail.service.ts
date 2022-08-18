@@ -62,10 +62,10 @@ export class MailService {
         },
         Subject: {
           Charset: 'UTF-8',
-          Data: 'Test email',
+          Data: 'Token Enclosed',
         },
       },
-      Source: 'sender@mail.ox.nathanrignall.uk',
+      Source: '"Oscar Ox" <no-reply@mail.ox.nathanrignall.uk>',
     });
 
     this.ses.send(command);

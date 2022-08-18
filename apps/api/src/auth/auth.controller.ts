@@ -80,7 +80,6 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
-      secure: true,
     });
 
     return tokens;
@@ -107,7 +106,6 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
-      secure: true,
     });
 
     return tokens;
@@ -131,7 +129,6 @@ export class AuthController {
     const tokens = await this.authService.refresh(session);
 
     response.cookie('refreshToken', tokens.refreshToken, {
-      expires: new Date(new Date().getTime() + 30 * 1000),
       sameSite: 'strict',
       httpOnly: true,
     });
