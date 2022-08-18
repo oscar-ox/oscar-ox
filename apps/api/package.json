@@ -27,6 +27,7 @@
     "prisma:seed": "npx prisma db seed"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.150.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
