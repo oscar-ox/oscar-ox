@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { JoinClassNames } from "../../utils";
+import { JoinClassNames } from "../../utils/style";
 
 enum Variant {
     LIGHT,
@@ -35,7 +35,7 @@ export function Card(props: Props) {
     return (
         <div
             className={JoinClassNames(
-                "rounded-lg overflow-hidden shadow-xl w-full text-center mb-5",
+                "rounded-lg overflow-hidden w-full text-center mb-5",
                 VARIANT_MAPS[variant],
                 PADDING_MAPS[padding],
                 className

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { JoinClassNames } from "../../utils";
+import { JoinClassNames } from "../../utils/style";
 
 enum Colour {
     LIGHT,
@@ -33,12 +33,12 @@ type Props = {
 const SIZE_MAPS: Record<Size, string> = {
     [Size.SMALL]: "px-3 py-1 text-sm",
     [Size.MEDIUM]: "px-4 py-2 text-base",
-    [Size.LARGE]: "px-4 py-2 text-2xl",
+    [Size.LARGE]: "px-4 py-2 text-lg",
 };
 
 const COLOUR_MAPS: Record<Colour, string> = {
-    [Colour.LIGHT]: "bg-gray-200 text-black",
-    [Colour.DARK]: "bg-gray-700 text-white",
+    [Colour.LIGHT]: "bg-gray-100 text-gray-900 hover:bg-gray-900 hover:text-gray-100",
+    [Colour.DARK]: "bg-gray-900 text-gray-100 hover:bg-gray-700 hover:text-gray-0",
     [Colour.RED]: "bg-red-500 text-white",
     [Colour.YELLOW]: "bg-yellow-500 text-black",
     [Colour.GREEN]: "bg-green-500 text-white",
