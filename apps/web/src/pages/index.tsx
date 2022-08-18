@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 
 import { useAuth, useToken } from '../common/hooks'
-import Navbar from '../modules/containers/Navbar/navbar'
+import Navbar from '../modules/containers/Navbar'
 
 const Page: NextPage = () => {
   const { token } = useToken()
