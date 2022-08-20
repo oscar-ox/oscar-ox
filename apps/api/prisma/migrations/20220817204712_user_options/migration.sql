@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `banned` BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN `ghost` BOOLEAN NOT NULL DEFAULT true,
+    ADD COLUMN `lastSent` DATETIME(3) NULL,
+    MODIFY `hash` VARCHAR(191) NULL;

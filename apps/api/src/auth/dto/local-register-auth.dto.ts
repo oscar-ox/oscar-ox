@@ -3,10 +3,10 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class LocalRegisterAuthDto {
   @ApiProperty()
-  firstName?: string;
+  firstName: string;
 
   @ApiProperty()
-  lastName?: string;
+  lastName: string;
 
   @IsEmail()
   @ApiProperty()

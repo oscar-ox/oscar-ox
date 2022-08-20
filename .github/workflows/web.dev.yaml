@@ -1,10 +1,10 @@
-name: Deploy API Dev
+name: Deploy Web Dev
 
 on:
   push:
-    branches: [dev]
+    branches: [web]
     paths:
-      - "apps/api/**"
+      - "apps/web/**"
 
   workflow_dispatch:
 
@@ -26,21 +26,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install
-      run: npx nps prepare.ci.api
-
-    - name: Build
-      run: npx nps build.ci.api
+      run: cd ./apps/web && npm i
 
     - name: Serverless
-      uses: serverless/github-action@v3.1
+      uses: serverless/github-action@v1.83.3
       with:
-        args: -c "cd ./apps/api && serverless deploy --stage dev"
+        args: -c "cd ./apps/web && serverless deploy --stage dev"
         entrypoint: /bin/sh
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
-        JWT_EMAIL_REGISTER_SECRET: ${{ secrets.JWT_EMAIL_REGISTER_SECRET }}
-        JWT_EMAIL_VERIFY_SECRET: ${{ secrets.JWT_EMAIL_VERIFY_SECRET }}
