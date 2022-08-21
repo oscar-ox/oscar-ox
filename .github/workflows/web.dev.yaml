@@ -28,8 +28,10 @@ jobs:
     - name: Install
       run: cd ./apps/web && npm i
 
-    - name: Install check
+    - name: Install check 1
       run : ls ./apps/web
+      
+    - name: Install check 2
       run : ls ./apps/web/node_modules
 
     - name: Serverless
