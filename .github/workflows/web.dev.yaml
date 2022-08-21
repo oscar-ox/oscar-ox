@@ -2,7 +2,7 @@ name: Deploy Web Dev
 
 on:
   push:
-    branches: [web]
+    branches: [dev]
     paths:
       - "apps/web/**"
 
@@ -27,6 +27,10 @@ jobs:
 
     - name: Install
       run: cd ./apps/web && npm i
+
+    - name: Install check
+      run : ls ./apps/web
+      run : ls ./apps/web/node_modules
 
     - name: Serverless
       uses: serverless/github-action@v1.83.3
