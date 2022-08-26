@@ -1,11 +1,8 @@
 import Link from "next/link";
-import Button from "../../../common/components/Button";
 
-import { useAuth, useToggle } from "../../../common/hooks";
+import { useToggle } from "../../../common/hooks";
 
 export function Navbar() {
-  const { loggedIn } = useAuth();
-
   const [menu, toggleMenu] = useToggle(false);
 
   return (

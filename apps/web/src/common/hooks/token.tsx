@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-// context type
+// token context type
 type tokenContextType = {
   token?: string;
   setToken: (value: string) => void;
@@ -10,8 +10,6 @@ type tokenContextType = {
 const tokenContextDefaultValues = {
   token: "",
   setToken: () => {},
-  loggedIn: false,
-  setLoggedIn: () => {},
 };
 
 export const TokenContext = createContext<tokenContextType>(
