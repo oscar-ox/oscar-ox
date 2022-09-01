@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // custom axios instance for api v1
-export const AxiosInstace1 = (refreshToken: () => string | undefined, token?: string) => {
+export const AxiosInstace1 = (refreshToken: () => string | undefined = () => { return undefined}, token?: string, preventRefresh: boolean = true) => {
   // axios instance for making requests
   const axiosInstance = axios.create();
 
@@ -9,6 +9,7 @@ export const AxiosInstace1 = (refreshToken: () => string | undefined, token?: st
   axiosInstance.interceptors.request.use((config) => {
     // add token to request headers
     config.headers['Authorization'] = "Bearer " + token;
+    config.baseURL = process.env.NEXT_PUBLIC_API_V1_URL;
 
     // return the custom config
     return config;
@@ -21,7 +22,7 @@ export const AxiosInstace1 = (refreshToken: () => string | undefined, token?: st
       const config = error?.config;
   
       // only refresh token if that was the error and not tried already
-      if (error?.response?.status === 404 && !config?.sent) {
+      if (error?.response?.status === 401 && !config?.sent && !preventRefresh) {
         config.sent = true;
 
         // try get a new token
@@ -37,15 +38,15 @@ export const AxiosInstace1 = (refreshToken: () => string | undefined, token?: st
           // return the new config
           return axios(config);
         } else {
-
+          
           // token could not be refresh
-          console.log("refresh failed")
+          return Promise.reject({error: error, data: error.response.data});
         }
 
       }
 
       // the error was not due to an expired token
-      return Promise.reject(error);
+      return Promise.reject({error: error, data: error.response.data});
     }
   );
 
