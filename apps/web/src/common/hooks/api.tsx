@@ -19,8 +19,11 @@ export function useApi(url: string): useApiType {
 
   // setup refresh function
   const refreshToken = (): string | undefined => {
+    // call the refresh
+    const RefreshInstacer = AxiosInstace1();
+
     // request the new token
-    console.log("REFRESH");
+    RefreshInstacer.post("/auth/refresh");
 
     // update the session vars
     setToken("hello");

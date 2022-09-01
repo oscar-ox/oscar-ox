@@ -31,7 +31,7 @@ type Props = {
   children: ReactNode;
 };
 
-export function TokenProvider({ children }: Props) {
+export function UserProvider({ children }: Props) {
   const [user, setUser] = useState<user>(userContextDefaultValues.user);
 
   return (
