@@ -1,12 +1,14 @@
 import Link from "next/link";
 
 import { useToggle } from "../../../common/hooks";
+import { useUser } from "../../../common/hooks/user";
 
 export function Navbar() {
+  const { user } = useUser();
   const [menu, toggleMenu] = useToggle(false);
 
   return (
-    <div className="fixed w-full border-b-2 border-slate-200 ">
+    <div className="fixed top-0 left-0 right-0 border-b-2 border-slate-200 ">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 sm:py-2 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -68,11 +70,19 @@ export function Navbar() {
                   </a>
                 </Link>
 
-                <Link href="/">
-                  <a className="rounded-md border-2 border-transparent bg-slate-100 px-3 py-2 text-lg font-medium text-slate-900 hover:border-slate-900">
-                    Account
-                  </a>
-                </Link>
+                {user.loggedIn ? (
+                  <Link href="/">
+                    <a className="rounded-md border-2 border-transparent bg-slate-100 px-3 py-2 text-lg font-medium text-slate-900 hover:border-slate-900">
+                      Account
+                    </a>
+                  </Link>
+                ) : (
+                  <Link href="/login">
+                    <a className="rounded-md border-2 border-transparent bg-slate-100 px-3 py-2 text-lg font-medium text-slate-900 hover:border-slate-900">
+                      Login
+                    </a>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
