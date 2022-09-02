@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 // user type
 type user = {
@@ -33,6 +39,19 @@ type Props = {
 
 export function UserProvider({ children }: Props) {
   const [user, setUser] = useState<user>(userContextDefaultValues.user);
+
+  useEffect(() => {
+    if (localStorage["user"]) {
+      const value = JSON.parse(localStorage.getItem("user") || "");
+      setUser(value);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user != userContextDefaultValues.user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
