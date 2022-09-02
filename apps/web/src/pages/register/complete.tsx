@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import * as Yup from "yup";
 import { FormikProps, FormikHelpers, Formik, Field, Form } from "formik";
@@ -17,33 +17,50 @@ import BaiscLayout from "../../modules/layouts/basic";
 import Button from "../../common/components/Button";
 
 interface FormValues {
-  email: string;
+  firstName: string;
+  lastName: string;
 }
 
 const configuration = new Configuration({});
 
-const EmailLoginForm = () => {
+const EmailRegisterForm = () => {
   const router = useRouter();
 
+  const [emailRegisterToken, setEmailRegisterToken] = useState<string>("x");
+
+  useEffect(() => {
+    if (router.query.token) {
+      if (typeof router.query.token === "string")
+        setEmailRegisterToken(router.query.token);
+    }
+  }, [router.query]);
+
   const [error, setError] = useState<ErrorEntity | null>();
-  const authApi = new AuthApi(configuration, "", AxiosInstace1());
+  const authApi = new AuthApi(
+    configuration,
+    "",
+    AxiosInstace1(undefined, emailRegisterToken)
+  );
 
   const initialValues: FormValues = {
-    email: "",
+    firstName: "",
+    lastName: "",
   };
 
   const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Email is required"),
+    firstName: Yup.string().required("First name is required"),
+    lastName: Yup.string().required("Last name is required"),
   });
 
   const onSubmit = (values: FormValues, helpers: FormikHelpers<FormValues>) => {
     authApi
-      .authControllerEmailLogin({
-        email: values.email,
+      .authControllerEmailRegister({
+        firstName: values.firstName,
+        lastName: values.lastName,
       })
       .then(() => {
         helpers.setSubmitting(false);
-        router.push("/login/wait");
+        router.push("/");
       })
       .catch(({ data }: { data: ErrorEntity }) => {
         helpers.setSubmitting(false);
@@ -59,17 +76,32 @@ const EmailLoginForm = () => {
     >
       {({ errors, touched, submitForm }: FormikProps<FormValues>) => (
         <Form className="h-64 w-full max-w-sm">
-          <label htmlFor="email" className="sr-only">
-            Email
+          <label htmlFor="firstName" className="sr-only">
+            First Name
           </label>
 
           <div className="mb-6">
             <Field
-              id="email"
-              type="email"
-              name="email"
-              autoComplete="email"
-              placeholder="Email Address"
+              id="firstName"
+              type="text"
+              name="firstName"
+              autoComplete="given-name"
+              placeholder="First Name"
+              className="relative block w-full rounded-md border-2 border-slate-200 px-4 py-2 text-lg text-slate-900 placeholder-slate-500"
+            />
+          </div>
+
+          <label htmlFor="lastName" className="sr-only">
+            Last Name
+          </label>
+
+          <div className="mb-6">
+            <Field
+              id="lastName"
+              type="text"
+              name="lastName"
+              autoComplete="family-name"
+              placeholder="Last Name"
               className="relative block w-full rounded-md border-2 border-slate-200 px-4 py-2 text-lg text-slate-900 placeholder-slate-500"
             />
           </div>
@@ -81,12 +113,17 @@ const EmailLoginForm = () => {
             colour={Button.colour.DARK}
             handleClick={submitForm}
           >
-            Login
+            Complete Registration
           </Button>
 
           <div className="h-32 text-center">
-            {touched.email && errors.email && <div>{errors.email}</div>}
-            {error && <div>{error.message}</div>}
+            {touched.firstName && errors.firstName && (
+              <div>{errors.firstName}</div>
+            )}
+            {touched.lastName && errors.lastName && (
+              <div>{errors.lastName}</div>
+            )}
+            {error && error.message}
           </div>
         </Form>
       )}
@@ -95,18 +132,18 @@ const EmailLoginForm = () => {
 };
 
 const Page: NextPage = () => (
-  <BaiscLayout title="Login">
+  <BaiscLayout title="Register">
     <div className="flex h-full flex-1 flex-col overflow-hidden py-8 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-1 flex-col items-center justify-center pt-12 pb-16">
         <div className="mb-10 text-5xl font-bold text-slate-900 ">Oscar Ox</div>
-        <EmailLoginForm />
+        <EmailRegisterForm />
       </div>
 
       <div className="flex items-center justify-center">
         <div className="text-lg font-medium ">
-          No Account?{" "}
-          <Link href="/register">
-            <a className="underline hover:text-slate-700">Register</a>
+          Already have an account?{" "}
+          <Link href="/login">
+            <a className="underline hover:text-slate-700">Login</a>
           </Link>
         </div>
       </div>

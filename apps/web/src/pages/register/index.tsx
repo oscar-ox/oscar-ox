@@ -22,7 +22,7 @@ interface FormValues {
 
 const configuration = new Configuration({});
 
-const EmailLoginForm = () => {
+const EmailStartForm = () => {
   const router = useRouter();
 
   const [error, setError] = useState<ErrorEntity | null>();
@@ -38,12 +38,12 @@ const EmailLoginForm = () => {
 
   const onSubmit = (values: FormValues, helpers: FormikHelpers<FormValues>) => {
     authApi
-      .authControllerEmailLogin({
+      .authControllerEmailStart({
         email: values.email,
       })
       .then(() => {
         helpers.setSubmitting(false);
-        router.push("/login/wait");
+        router.push("/register/wait");
       })
       .catch(({ data }: { data: ErrorEntity }) => {
         helpers.setSubmitting(false);
@@ -81,12 +81,12 @@ const EmailLoginForm = () => {
             colour={Button.colour.DARK}
             handleClick={submitForm}
           >
-            Login
+            Register
           </Button>
 
           <div className="h-32 text-center">
             {touched.email && errors.email && <div>{errors.email}</div>}
-            {error && <div>{error.message}</div>}
+            {error && error.message}
           </div>
         </Form>
       )}
@@ -95,18 +95,18 @@ const EmailLoginForm = () => {
 };
 
 const Page: NextPage = () => (
-  <BaiscLayout title="Login">
+  <BaiscLayout title="Register">
     <div className="flex h-full flex-1 flex-col overflow-hidden py-8 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-1 flex-col items-center justify-center pt-12 pb-16">
         <div className="mb-10 text-5xl font-bold text-slate-900 ">Oscar Ox</div>
-        <EmailLoginForm />
+        <EmailStartForm />
       </div>
 
       <div className="flex items-center justify-center">
         <div className="text-lg font-medium ">
-          No Account?{" "}
-          <Link href="/register">
-            <a className="underline hover:text-slate-700">Register</a>
+          Already have an account?{" "}
+          <Link href="/login">
+            <a className="underline hover:text-slate-700">Login</a>
           </Link>
         </div>
       </div>
