@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-// context type
+// token context type
 type tokenContextType = {
-  token?: string;
+  token: string;
   setToken: (value: string) => void;
 };
 
@@ -10,8 +10,6 @@ type tokenContextType = {
 const tokenContextDefaultValues = {
   token: "",
   setToken: () => {},
-  loggedIn: false,
-  setLoggedIn: () => {},
 };
 
 export const TokenContext = createContext<tokenContextType>(
@@ -25,7 +23,7 @@ type Props = {
 };
 
 export function TokenProvider({ children }: Props) {
-  const [token, setToken] = useState<string>("none");
+  const [token, setToken] = useState<string>("x");
 
   return (
     <TokenContext.Provider value={{ token, setToken }}>

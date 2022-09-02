@@ -2,7 +2,7 @@ name: Deploy Web Dev
 
 on:
   push:
-    branches: [web]
+    branches: [dev]
     paths:
       - "apps/web/**"
 
@@ -28,10 +28,16 @@ jobs:
     - name: Install
       run: cd ./apps/web && npm i
 
+    - name: Install check 1
+      run : ls ./apps/web
+      
+    - name: Install check 2
+      run : ls ./apps/web/node_modules
+
     - name: Serverless
       uses: serverless/github-action@v1.83.3
       with:
-        args: -c "cd ./apps/web && serverless deploy --stage dev"
+        args: -c "cd ./apps/web && serverless"
         entrypoint: /bin/sh
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
