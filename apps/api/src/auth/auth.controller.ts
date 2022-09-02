@@ -4,6 +4,7 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
   ApiCookieAuth,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
 import { Response } from 'express';
@@ -16,7 +17,7 @@ import {
   EmailLoginAuthDto,
   EmailStartAuthDto,
 } from './dto';
-import { AuthEntity, UserEntity } from './entity';
+import { AuthEntity, UserEntity, ErrorEntity } from './entity';
 import { GetUser } from './decorator';
 import {
   JwtEmailRegisterGuard,
@@ -27,6 +28,7 @@ import { Session, User } from 'generated/client';
 
 @Controller('auth')
 @ApiTags('auth')
+@ApiBadRequestResponse({ type: ErrorEntity })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

@@ -1,15 +1,19 @@
-import type { AppProps } from 'next/app'
+import type { AppProps } from "next/app";
 
-import { AuthProvider, TokenProvider } from '../common/hooks'
-import '../../styles/globals.css'
+import { TokenProvider, UserProvider, AxiosProvider } from "../common/hooks";
+
+import "../../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AuthProvider>
-      <TokenProvider>
-        <Component {...pageProps} />
-      </TokenProvider>
-    </AuthProvider>)
+    <TokenProvider>
+      <UserProvider>
+        <AxiosProvider>
+          <Component {...pageProps} />
+        </AxiosProvider>
+      </UserProvider>
+    </TokenProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
