@@ -49,11 +49,15 @@ export class MailService {
         Body: {
           Html: {
             Charset: 'UTF-8',
-            Data: token,
+            Data:
+              'https://www.ox.nathanrignall.uk/register/complete?token=' +
+              token,
           },
           Text: {
             Charset: 'UTF-8',
-            Data: token,
+            Data:
+              'https://www.ox.nathanrignall.uk/register/complete?token=' +
+              token,
           },
         },
         Subject: {
