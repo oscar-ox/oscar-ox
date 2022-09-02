@@ -42,3 +42,5 @@ jobs:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+        JWT_EMAIL_REGISTER_SECRET: ${{ secrets.JWT_EMAIL_REGISTER_SECRET }}
+        JWT_EMAIL_VERIFY_SECRET: ${{ secrets.JWT_EMAIL_VERIFY_SECRET }}

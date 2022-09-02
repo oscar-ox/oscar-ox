@@ -20,10 +20,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  email     String  @unique
   firstName String?
   lastName  String?
-  email     String  @unique
-  hash      String
+  hash      String?
+
+  ghost    Boolean   @default(true)
+  banned   Boolean   @default(false)
+  lastSent DateTime?
 
   session Session[]
 }
@@ -33,6 +37,7 @@ model Session {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  started Boolean @default(false)
   revoked Boolean @default(false)
 
   userId String

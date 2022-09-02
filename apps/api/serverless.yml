@@ -6,6 +6,16 @@ provider:
   name: aws
   runtime: nodejs16.x
   region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - 'ses:SendBulkTemplatedEmail'
+            - 'ses:SendEmail'
+            - 'ses:SendRawEmail'
+            - 'ses:SendTemplatedEmail'
+          Resource: '*'
 
 plugins:
   - serverless-offline
@@ -45,6 +55,8 @@ functions:
       DATABASE_URL: ${env:DATABASE_URL}
       JWT_SECRET: ${env:JWT_SECRET}
       JWT_REFRESH_SECRET: ${env:JWT_REFRESH_SECRET}
+      JWT_EMAIL_REGISTER_SECRET: ${env:JWT_EMAIL_REGISTER_SECRET}
+      JWT_EMAIL_VERIFY_SECRET: ${env:JWT_EMAIL_VERIFY_SECRET}
     events:
     - http:
         cors: true
