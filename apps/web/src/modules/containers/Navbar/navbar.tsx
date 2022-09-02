@@ -64,14 +64,14 @@ export function Navbar() {
                   </a>
                 </Link>
 
-                <Link href="/">
+                <Link href="/productions">
                   <a className="rounded-md  border-2 border-slate-200 px-3 py-2 text-lg font-medium text-slate-900 hover:border-slate-900">
                     Productions
                   </a>
                 </Link>
 
                 {user.loggedIn ? (
-                  <Link href="/">
+                  <Link href="/account">
                     <a className="rounded-md border-2 border-transparent bg-slate-100 px-3 py-2 text-lg font-medium text-slate-900 hover:border-slate-900">
                       Account
                     </a>

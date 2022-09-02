@@ -1,43 +1,17 @@
 import useSWR from "swr";
-
-import { useToken } from "./token";
-import { useUser } from "./user";
-import { AxiosInstace1 } from "../utils/axios";
+import { AxiosInstance } from "axios";
 
 // api type
 export type useApiType = {
   loading: boolean;
-  data: object;
-  error: object;
+  data: any;
+  error: any;
 };
 
 // hook for making get api requests
-export function useApi(url: string): useApiType {
-  // register the hooks required
-  const { token, setToken } = useToken();
-  const { setUser } = useUser();
-
-  // setup refresh function
-  const refreshToken = (): string | undefined => {
-    // call the refresh
-    const RefreshInstacer = AxiosInstace1();
-
-    // request the new token
-    RefreshInstacer.post("/auth/refresh");
-
-    // update the session vars
-    setToken("hello");
-    setUser({ loggedIn: false });
-
-    // return the new token
-    return token;
-  };
-
+export function useApi(axios: AxiosInstance, url: string): useApiType {
   // create the axios instace
-  const fetcher = (url: string) =>
-    AxiosInstace1(refreshToken, token)
-      .get(url)
-      .then((res) => res.data);
+  const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
   // make the request
   const { data, error } = useSWR([url], fetcher);

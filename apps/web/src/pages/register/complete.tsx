@@ -15,6 +15,7 @@ import {
 
 import BaiscLayout from "../../modules/layouts/basic";
 import Button from "../../common/components/Button";
+import { useUser, useToken } from "../../common/hooks";
 
 interface FormValues {
   firstName: string;
@@ -25,6 +26,9 @@ const configuration = new Configuration({});
 
 const EmailRegisterForm = () => {
   const router = useRouter();
+
+  const { setUser } = useUser();
+  const { setToken } = useToken();
 
   const [emailRegisterToken, setEmailRegisterToken] = useState<string>("x");
 
@@ -58,8 +62,14 @@ const EmailRegisterForm = () => {
         firstName: values.firstName,
         lastName: values.lastName,
       })
-      .then(() => {
+      .then((response) => {
         helpers.setSubmitting(false);
+        setUser({
+          loggedIn: true,
+          firstName: values.firstName,
+          lastName: values.lastName,
+        });
+        setToken(response.data.accessToken);
         router.push("/");
       })
       .catch(({ data }: { data: ErrorEntity }) => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // custom axios instance for api v1
-export const AxiosInstace1 = (refreshToken: () => string | undefined = () => { return undefined}, token?: string, preventRefresh: boolean = true) => {
+export const AxiosInstace1 = (refreshToken: () => Promise<string> | undefined = () => { return undefined}, token?: string, preventRefresh: boolean = true) => {
   // axios instance for making requests
   const axiosInstance = axios.create();
 
@@ -26,14 +26,11 @@ export const AxiosInstace1 = (refreshToken: () => string | undefined = () => { r
         config.sent = true;
 
         // try get a new token
-        const newToken = refreshToken();
+        const newToken = await refreshToken();
   
         // check if a new token arrives
         if (newToken) {
-          config.headers = {
-            ...config.headers,
-            authorization: "Bearer " + newToken,
-          };
+          config.headers['Authorization'] = "Bearer " + newToken;
 
           // return the new config
           return axios(config);
