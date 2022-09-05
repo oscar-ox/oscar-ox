@@ -12,10 +12,10 @@ import {
   AuthApi,
   ErrorEntity,
 } from "../../common/utils/api-client";
+import { useUser, useToken } from "../../common/hooks";
 
 import BaiscLayout from "../../modules/layouts/basic";
 import Button from "../../common/components/Button";
-import { useUser, useToken } from "../../common/hooks";
 
 interface FormValues {
   firstName: string;
