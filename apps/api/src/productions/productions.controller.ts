@@ -40,6 +40,7 @@ export class ProductionsController {
   }
 
   @Get()
+  @UseGuards(JwtGuard)
   @ApiOkResponse({ type: [ProductionEntity] })
   findAll() {
     return this.productionsService.findAll();
