@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
