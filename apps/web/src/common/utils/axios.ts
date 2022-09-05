@@ -29,7 +29,7 @@ export const AxiosInstace1 = (refreshToken: () => Promise<string> | undefined = 
         const newToken = await refreshToken();
   
         // check if a new token arrives
-        if (newToken) {
+        if (newToken != "x") {
           config.headers['Authorization'] = "Bearer " + newToken;
 
           // return the new config

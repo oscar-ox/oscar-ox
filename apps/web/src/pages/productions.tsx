@@ -1,13 +1,26 @@
 import type { NextPage } from "next";
 
 import { useApi, useAxios } from "../common/hooks";
+import {
+  Configuration,
+  ProductionsApi,
+  ProductionEntity,
+} from "../common/utils/api-client";
+
+import { AxiosInstance, AxiosResponse } from "axios";
 
 import DefaultLayout from "../modules/layouts/default";
+
+const configuration = new Configuration({});
 
 const EmailStartForm = () => {
   const axios = useAxios();
 
-  const { loading, data, error } = useApi(axios, "/productions");
+  const productionsApi = new ProductionsApi(configuration, "", axios);
+
+  const { data, error } = useApi<ProductionEntity[]>(
+    productionsApi.productionsControllerFindAll.bind(productionsApi)
+  );
 
   if (data) {
     const FormedList = data.map((item: any) => (
@@ -16,7 +29,11 @@ const EmailStartForm = () => {
 
     return <>{FormedList}</>;
   } else {
-    return <>Loading</>;
+    if (error) {
+      return <>{error.message}</>;
+    } else {
+      return <>Loading</>;
+    }
   }
 };
 

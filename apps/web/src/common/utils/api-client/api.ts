@@ -106,12 +106,6 @@ export interface EmailStartAuthDto {
 export interface ErrorEntity {
     /**
      * 
-     * @type {string}
-     * @memberof ErrorEntity
-     */
-    'error': string;
-    /**
-     * 
      * @type {Array<string>}
      * @memberof ErrorEntity
      */
