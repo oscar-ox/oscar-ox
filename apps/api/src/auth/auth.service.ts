@@ -140,7 +140,7 @@ export class AuthService {
     const token = await this.signEmailRegisterToken(user.id);
 
     // send an email with the token %%TEMP%%
-    this.mail.sendToken(user.email, token);
+    this.mail.sendRegisterToken(user.email, token);
 
     // return the user
     return { id: user.id, email: user.email };
@@ -195,7 +195,7 @@ export class AuthService {
     const token = await this.signEmailVerifyToken(session.id);
 
     // send an email with the token
-    this.mail.sendToken(user.email, token);
+    this.mail.sendLoginToken(user.email, token);
 
     // return the user
     return { id: user.id, email: user.email };
