@@ -117,9 +117,7 @@ const Page: NextPage = () => {
             <EmailLoginForm complete={finalComplete} />
           ) : (
             <div className="h-64 w-full max-w-sm text-center ">
-              <div className="text-2xl">
-                Check your email for registration link
-              </div>
+              <div className="text-2xl">Check your email for login link</div>
               <div className="mt-10 text-lg font-medium">
                 No email?{" "}
                 <div
