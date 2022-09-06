@@ -61,7 +61,7 @@ export class MailService {
         },
         Subject: {
           Charset: 'UTF-8',
-          Data: 'Welcome to Oscar&#39;s Ox',
+          Data: 'Welcome to Oscar Ox',
         },
       },
       Source: '"Oscar Ox" <no-reply@mail.ox.nathanrignall.uk>',
@@ -79,16 +79,16 @@ export class MailService {
         Body: {
           Html: {
             Charset: 'UTF-8',
-            Data: 'https://www.ox.nathanrignall.uk/logn/verify?token=' + token,
+            Data: 'https://dev.ox.nathanrignall.uk/login/verify?token=' + token,
           },
           Text: {
             Charset: 'UTF-8',
-            Data: 'https://www.ox.nathanrignall.uk/logn/verify?token=' + token,
+            Data: 'https://dev.ox.nathanrignall.uk/login/verify?token=' + token,
           },
         },
         Subject: {
           Charset: 'UTF-8',
-          Data: 'Login Link for Oscar&#39;s Ox',
+          Data: 'Login Link for Oscar Ox',
         },
       },
       Source: '"Oscar Ox" <no-reply@mail.ox.nathanrignall.uk>',
