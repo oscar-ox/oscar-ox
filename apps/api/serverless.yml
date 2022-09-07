@@ -60,10 +60,8 @@ functions:
       JWT_EMAIL_VERIFY_SECRET: ${env:JWT_EMAIL_VERIFY_SECRET}
     events:
     - http:
-        cors: true
         path: '/'
         method: any
     - http:
-        cors: true
         path: '{proxy+}'
-        method: any    
+        method: any
