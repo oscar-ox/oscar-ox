@@ -14,11 +14,11 @@ async function bootstrap() {
   app.use(cookieParser());
 
   const whitelist = [
-    'ox.nathanrignall.uk',
-    'www.ox.nathanrignall.uk',
-    'dev.ox.nathanrignall.uk',
-    'testing.ox.nathanrignall.uk',
-    'local.ox.nathanrignall.uk',
+    'https://ox.nathanrignall.uk',
+    'https://www.ox.nathanrignall.uk',
+    'https://dev.ox.nathanrignall.uk',
+    'https://testing.ox.nathanrignall.uk',
+    'http://local.ox.nathanrignall.uk',
   ];
 
   app.enableCors({
@@ -26,9 +26,10 @@ async function bootstrap() {
       if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error('Not allowed by CORS' + origin));
       }
     },
+    credentials: true,
   });
 
   const config = new DocumentBuilder()
