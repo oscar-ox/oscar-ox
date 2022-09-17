@@ -7,13 +7,11 @@ import {
   ProductionEntity,
 } from "../common/utils/api-client";
 
-import { AxiosInstance, AxiosResponse } from "axios";
-
 import DefaultLayout from "../modules/layouts/default";
 
 const configuration = new Configuration({});
 
-const EmailStartForm = () => {
+const Productions = () => {
   const axios = useAxios();
 
   const productionsApi = new ProductionsApi(configuration, "", axios);
@@ -23,7 +21,7 @@ const EmailStartForm = () => {
   );
 
   if (data) {
-    const FormedList = data.map((item: any) => (
+    const FormedList = data.map((item: ProductionEntity) => (
       <div key={item.id}>{item.name}</div>
     ));
 
@@ -40,7 +38,7 @@ const EmailStartForm = () => {
 const Page: NextPage = () => {
   return (
     <DefaultLayout title="Oscar Ox - Productions">
-      <EmailStartForm />
+      <Productions />
     </DefaultLayout>
   );
 };

@@ -66,8 +66,6 @@ const EmailRegisterForm = () => {
         helpers.setSubmitting(false);
         setUser({
           loggedIn: true,
-          firstName: values.firstName,
-          lastName: values.lastName,
         });
         setToken(response.data.accessToken);
         router.push("/");
