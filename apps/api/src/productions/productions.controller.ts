@@ -47,7 +47,7 @@ export class ProductionsController {
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: [ProductionEntity] })
+  @ApiOkResponse({ type: ProductionEntity })
   findOne(@Param('id') id: string) {
     return this.productionsService.findOne(id);
   }
@@ -65,7 +65,6 @@ export class ProductionsController {
 
   @Delete(':id')
   @UseGuards(JwtGuard)
-  @ApiOkResponse({ type: [ProductionEntity] })
   @ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.productionsService.remove(id);
