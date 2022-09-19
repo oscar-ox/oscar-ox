@@ -11,6 +11,7 @@ export const AxiosInstace1 = (refreshToken: () => Promise<string> | undefined = 
     config.headers['Authorization'] = "Bearer " + token;
     config.baseURL = process.env.NEXT_PUBLIC_API_V1_URL;
     config.withCredentials = true;
+    config.headers['Content-Type'] = 'application/json';
 
     // return the custom config
     return config;

@@ -30,6 +30,9 @@ model User {
   lastSent DateTime?
 
   session Session[]
+
+  role    RoleAssignment[]
+  manager Manager[]
 }
 
 model Session {
@@ -44,10 +47,98 @@ model Session {
   user   User   @relation(fields: [userId], references: [id])
 }
 
+model Venue {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  show Show[]
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  production Production[]
+}
+
 model Production {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name String
+
+  show Show[]
+
+  manager Manager[]
+
+  companyId String
+  Company   Company @relation(fields: [companyId], references: [id])
+}
+
+model Manager {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productionId String
+  Production   Production @relation(fields: [productionId], references: [id])
+
+  userId String
+  User   User   @relation(fields: [userId], references: [id])
+}
+
+model Show {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  productionId String
+  Production   Production @relation(fields: [productionId], references: [id])
+
+  venueId String
+  Venue   Venue  @relation(fields: [venueId], references: [id])
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  role RoleAssignment[]
+
+  roleGroupsId String?
+  RoleGroups   RoleGroups? @relation(fields: [roleGroupsId], references: [id])
+}
+
+model RoleGroups {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  role Role[]
+}
+
+model RoleAssignment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roleId String
+  Role   Role   @relation(fields: [roleId], references: [id])
+
+  userId String
+  User   User   @relation(fields: [userId], references: [id])
 }

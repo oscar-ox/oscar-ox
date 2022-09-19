@@ -14,4 +14,7 @@ export class ProductionEntity implements Production {
 
   @ApiProperty()
   name: string;
+
+  @ApiProperty()
+  companyId: string;
 }

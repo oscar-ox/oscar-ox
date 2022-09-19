@@ -6,4 +6,8 @@ export class CreateProductionDto {
   @MinLength(3)
   @ApiProperty()
   name: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  companyId: string;
 }

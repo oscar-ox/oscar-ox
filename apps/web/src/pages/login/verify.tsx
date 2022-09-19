@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
@@ -47,6 +46,9 @@ const EmailVerify = () => {
             router.push("/");
           })
           .catch(({ data }: { data: ErrorEntity }) => {
+            setUser({
+              loggedIn: false,
+            });
             setError(data);
           });
       }
