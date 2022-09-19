@@ -2,7 +2,7 @@ name: Deploy API Testing
 
 on:
   push:
-    branches: [testing]
+    branches: [main]
     paths:
       - "apps/api/**"
 
