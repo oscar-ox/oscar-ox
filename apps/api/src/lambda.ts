@@ -18,7 +18,25 @@ const bootstrapServer = async (): Promise<Server> => {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use(cookieParser());
 
-  app.enableCors();
+  const whitelist = [
+    'https://ox.nathanrignall.uk',
+    'https://www.ox.nathanrignall.uk',
+    'https://dev.ox.nathanrignall.uk',
+    'https://testing.ox.nathanrignall.uk',
+    'http://local.ox.nathanrignall.uk',
+  ];
+
+  app.enableCors({
+    origin: function (origin, callback) {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
+        console.log(origin);
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS' + origin));
+      }
+    },
+    credentials: true,
+  });
 
   await app.init();
   return awsServerlessExpress.createServer(expressApp);

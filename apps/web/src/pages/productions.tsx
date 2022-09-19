@@ -1,29 +1,44 @@
 import type { NextPage } from "next";
 
 import { useApi, useAxios } from "../common/hooks";
+import {
+  Configuration,
+  ProductionsApi,
+  ProductionEntity,
+} from "../common/utils/api-client";
 
 import DefaultLayout from "../modules/layouts/default";
 
-const EmailStartForm = () => {
+const configuration = new Configuration({});
+
+const Productions = () => {
   const axios = useAxios();
 
-  const { loading, data, error } = useApi(axios, "/productions");
+  const productionsApi = new ProductionsApi(configuration, "", axios);
+
+  const { data, error } = useApi<ProductionEntity[]>(
+    productionsApi.productionsControllerFindAll.bind(productionsApi)
+  );
 
   if (data) {
-    const FormedList = data.map((item: any) => (
+    const FormedList = data.map((item: ProductionEntity) => (
       <div key={item.id}>{item.name}</div>
     ));
 
     return <>{FormedList}</>;
   } else {
-    return <>Loading</>;
+    if (error) {
+      return <>{error.message}</>;
+    } else {
+      return <>Loading</>;
+    }
   }
 };
 
 const Page: NextPage = () => {
   return (
     <DefaultLayout title="Oscar Ox - Productions">
-      <EmailStartForm />
+      <Productions />
     </DefaultLayout>
   );
 };

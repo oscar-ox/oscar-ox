@@ -1,8 +1,8 @@
 myNextApplication:
   component: "@sls-next/serverless-component@3.7.0"
   inputs:
-    domain: ox.nathanrignall.uk
+    domain: [dev,ox.nathanrignall.uk]
     bucketRegion: eu-west-1
     build:
       env:
-        NEXT_PUBLIC_API_V1_URL: https://api.ox.nathanrignall.uk
+        NEXT_PUBLIC_API_V1_URL: https://api.dev.ox.nathanrignall.uk
