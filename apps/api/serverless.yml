@@ -59,9 +59,11 @@ functions:
       JWT_EMAIL_REGISTER_SECRET: ${env:JWT_EMAIL_REGISTER_SECRET}
       JWT_EMAIL_VERIFY_SECRET: ${env:JWT_EMAIL_VERIFY_SECRET}
     events:
-    - httpApi:
+    - http:
+        cors: true
         path: '/'
         method: any
-    - httpApi:
+    - http:
+        cors: true
         path: '{proxy+}'
-        method: any
+        method: any    
