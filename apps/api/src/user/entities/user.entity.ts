@@ -13,10 +13,10 @@ export class UserEntity {
   @ApiProperty()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false, nullable: true })
   firstName: string | null;
 
-  @ApiProperty()
+  @ApiProperty({ required: false, nullable: true })
   lastName: string | null;
 
   @ApiProperty()

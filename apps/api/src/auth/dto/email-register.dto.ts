@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-export class EmailRegisterAuthDto {
-  @ApiProperty()
-  firstName: string | null;
+import { IsOptional } from 'class-validator';
 
-  @ApiProperty()
-  lastName: string | null;
+export class EmailRegisterAuthDto {
+  @IsOptional()
+  @ApiProperty({ required: false })
+  firstName?: string;
+
+  @IsOptional()
+  @ApiProperty({ required: false })
+  lastName?: string;
 }
