@@ -13,17 +13,21 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiBearerAuth,
+  ApiBadRequestResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { ProductionsService } from './productions.service';
 import { CreateProductionDto } from './dto/create-production.dto';
 import { UpdateProductionDto } from './dto/update-production.dto';
-import { ProductionEntity } from './entities/production.entity';
+import { ErrorEntity, ProductionEntity } from './entities';
 
 import { JwtGuard } from 'src/auth/guard';
 
 @Controller('productions')
 @ApiTags('productions')
+@ApiBadRequestResponse({ type: ErrorEntity })
+@ApiUnauthorizedResponse({ type: ErrorEntity })
 export class ProductionsController {
   constructor(private readonly productionsService: ProductionsService) {}
 
@@ -36,13 +40,14 @@ export class ProductionsController {
   }
 
   @Get()
+  @UseGuards(JwtGuard)
   @ApiOkResponse({ type: [ProductionEntity] })
   findAll() {
     return this.productionsService.findAll();
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: [ProductionEntity] })
+  @ApiOkResponse({ type: ProductionEntity })
   findOne(@Param('id') id: string) {
     return this.productionsService.findOne(id);
   }
@@ -60,7 +65,6 @@ export class ProductionsController {
 
   @Delete(':id')
   @UseGuards(JwtGuard)
-  @ApiOkResponse({ type: [ProductionEntity] })
   @ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.productionsService.remove(id);

@@ -6,4 +6,10 @@ export class UserEntity {
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty()
+  firstName: string | null;
+
+  @ApiProperty()
+  lastName: string | null;
 }

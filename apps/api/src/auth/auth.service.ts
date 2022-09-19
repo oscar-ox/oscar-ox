@@ -16,7 +16,7 @@ import {
   EmailLoginAuthDto,
   EmailStartAuthDto,
 } from './dto';
-import { AuthEntity, UserEntity } from './entity';
+import { AuthEntity, UserEntity, EmailEntity, SessionEntity } from './entity';
 import { Session, User } from 'generated/client';
 
 @Injectable()
@@ -87,7 +87,7 @@ export class AuthService {
     return this.signAuthTokens(user.id, session.id);
   }
 
-  async emailStart(dto: EmailStartAuthDto): Promise<UserEntity> {
+  async emailStart(dto: EmailStartAuthDto): Promise<EmailEntity> {
     // find the user in the database using email
     let user = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -140,7 +140,7 @@ export class AuthService {
     const token = await this.signEmailRegisterToken(user.id);
 
     // send an email with the token %%TEMP%%
-    this.mail.sendToken(user.email, token);
+    this.mail.sendRegisterToken(user.email, token);
 
     // return the user
     return { id: user.id, email: user.email };
@@ -171,7 +171,7 @@ export class AuthService {
     return this.signAuthTokens(user.id, session.id);
   }
 
-  async emailLogin(dto: EmailLoginAuthDto): Promise<UserEntity> {
+  async emailLogin(dto: EmailLoginAuthDto): Promise<EmailEntity> {
     // find the user in the database using email
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -195,7 +195,7 @@ export class AuthService {
     const token = await this.signEmailVerifyToken(session.id);
 
     // send an email with the token
-    this.mail.sendToken(user.email, token);
+    this.mail.sendLoginToken(user.email, token);
 
     // return the user
     return { id: user.id, email: user.email };
@@ -239,6 +239,14 @@ export class AuthService {
 
     // return the two tokens
     return this.signAuthTokens(session.userId, session.id);
+  }
+
+  getUser(id: string): Promise<UserEntity> {
+    return this.prisma.user.findUnique({ where: { id: id } });
+  }
+
+  getSessions(id: string): Promise<SessionEntity[]> {
+    return this.prisma.session.findMany({ where: { userId: id } });
   }
 
   async signAuthTokens(userId: string, sessionId: string): Promise<AuthEntity> {
