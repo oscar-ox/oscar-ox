@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
@@ -40,7 +39,7 @@ export class MailService {
     this.ses.send(command);
   }
 
-  sendToken(email: string, token: string) {
+  sendRegisterToken(email: string, token: string) {
     const command = new SendEmailCommand({
       Destination: {
         ToAddresses: [email],
@@ -49,16 +48,47 @@ export class MailService {
         Body: {
           Html: {
             Charset: 'UTF-8',
-            Data: token,
+            Data:
+              'https://www.ox.nathanrignall.uk/register/complete?token=' +
+              token,
           },
           Text: {
             Charset: 'UTF-8',
-            Data: token,
+            Data:
+              'https://www.ox.nathanrignall.uk/register/complete?token=' +
+              token,
           },
         },
         Subject: {
           Charset: 'UTF-8',
-          Data: 'Token Enclosed',
+          Data: 'Welcome to Oscar Ox',
+        },
+      },
+      Source: '"Oscar Ox" <no-reply@mail.ox.nathanrignall.uk>',
+    });
+
+    this.ses.send(command);
+  }
+
+  sendLoginToken(email: string, token: string) {
+    const command = new SendEmailCommand({
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: 'https://dev.ox.nathanrignall.uk/login/verify?token=' + token,
+          },
+          Text: {
+            Charset: 'UTF-8',
+            Data: 'https://dev.ox.nathanrignall.uk/login/verify?token=' + token,
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: 'Login Link for Oscar Ox',
         },
       },
       Source: '"Oscar Ox" <no-reply@mail.ox.nathanrignall.uk>',

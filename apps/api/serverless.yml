@@ -6,6 +6,7 @@ provider:
   name: aws
   runtime: nodejs16.x
   region: eu-west-1
+  memorySize: 256
   iam:
     role:
       statements:
@@ -58,11 +59,9 @@ functions:
       JWT_EMAIL_REGISTER_SECRET: ${env:JWT_EMAIL_REGISTER_SECRET}
       JWT_EMAIL_VERIFY_SECRET: ${env:JWT_EMAIL_VERIFY_SECRET}
     events:
-    - http:
-        cors: true
+    - httpApi:
         path: '/'
         method: any
-    - http:
-        cors: true
+    - httpApi:
         path: '{proxy+}'
-        method: any    
+        method: any

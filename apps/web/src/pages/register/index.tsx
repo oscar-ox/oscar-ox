@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 import * as Yup from "yup";
@@ -22,9 +21,11 @@ interface FormValues {
 
 const configuration = new Configuration({});
 
-const EmailStartForm = () => {
-  const router = useRouter();
+type EmailStartFormProps = {
+  complete: () => void;
+};
 
+const EmailStartForm = ({ complete }: EmailStartFormProps) => {
   const [error, setError] = useState<ErrorEntity | null>();
   const authApi = new AuthApi(configuration, "", AxiosInstace1());
 
@@ -43,7 +44,7 @@ const EmailStartForm = () => {
       })
       .then(() => {
         helpers.setSubmitting(false);
-        router.push("/register/wait");
+        complete();
       })
       .catch(({ data }: { data: ErrorEntity }) => {
         helpers.setSubmitting(false);
@@ -94,24 +95,55 @@ const EmailStartForm = () => {
   );
 };
 
-const Page: NextPage = () => (
-  <BaiscLayout title="Register">
-    <div className="flex h-full flex-1 flex-col overflow-hidden py-8 px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-1 flex-col items-center justify-center pt-12 pb-16">
-        <div className="mb-10 text-5xl font-bold text-slate-900 ">Oscar Ox</div>
-        <EmailStartForm />
-      </div>
+const Page: NextPage = () => {
+  const [complete, setComplete] = useState<boolean>(false);
 
-      <div className="flex items-center justify-center">
-        <div className="text-lg font-medium ">
-          Already have an account?{" "}
-          <Link href="/login">
-            <a className="underline hover:text-slate-700">Login</a>
-          </Link>
+  const finalComplete = (): void => {
+    setComplete(true);
+  };
+
+  const retryComplete = (): void => {
+    setComplete(false);
+  };
+
+  return (
+    <BaiscLayout title="Register">
+      <div className="flex h-full flex-1 flex-col overflow-hidden py-8 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-1 flex-col items-center justify-center pt-12 pb-16">
+          <div className="mb-10 text-5xl font-bold text-slate-900 ">
+            Oscar Ox
+          </div>
+          {!complete ? (
+            <EmailStartForm complete={finalComplete} />
+          ) : (
+            <div className="h-64 w-full max-w-sm text-center ">
+              <div className="text-2xl">
+                Check your email for registration link
+              </div>
+              <div className="mt-10 text-lg font-medium">
+                No email?{" "}
+                <div
+                  className="inline cursor-pointer underline hover:text-slate-700"
+                  onClick={retryComplete}
+                >
+                  Retry
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-center">
+          <div className="text-lg font-medium ">
+            Already have an account?{" "}
+            <Link href="/login">
+              <a className="underline hover:text-slate-700">Login</a>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
-  </BaiscLayout>
-);
+    </BaiscLayout>
+  );
+};
 
 export default Page;

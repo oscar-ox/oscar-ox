@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, Res } from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
@@ -17,9 +17,16 @@ import {
   EmailLoginAuthDto,
   EmailStartAuthDto,
 } from './dto';
-import { AuthEntity, UserEntity, ErrorEntity } from './entity';
+import {
+  AuthEntity,
+  UserEntity,
+  EmailEntity,
+  ErrorEntity,
+  SessionEntity,
+} from './entity';
 import { GetUser } from './decorator';
 import {
+  JwtGuard,
   JwtEmailRegisterGuard,
   JwtEmailVerifyGuard,
   JwtRefreshGuard,
@@ -51,17 +58,17 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
-      secure: true,
+      domain: '.ox.nathanrignall.uk',
     });
 
     return tokens;
   }
 
   @Post('/email/start')
-  @ApiOkResponse({ type: UserEntity })
+  @ApiOkResponse({ type: EmailEntity })
   emailStart(
     @Body() emailStartAuthDto: EmailStartAuthDto,
-  ): Promise<UserEntity> {
+  ): Promise<EmailEntity> {
     return this.authService.emailStart(emailStartAuthDto);
   }
 
@@ -82,16 +89,17 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
+      domain: '.ox.nathanrignall.uk',
     });
 
     return tokens;
   }
 
   @Post('/email/login')
-  @ApiOkResponse({ type: UserEntity })
+  @ApiOkResponse({ type: EmailEntity })
   emailLogin(
     @Body() emailLoginAuthDto: EmailLoginAuthDto,
-  ): Promise<UserEntity> {
+  ): Promise<EmailEntity> {
     return this.authService.emailLogin(emailLoginAuthDto);
   }
 
@@ -108,6 +116,7 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
+      domain: '.ox.nathanrignall.uk',
     });
 
     return tokens;
@@ -133,8 +142,23 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
+      domain: '.ox.nathanrignall.uk',
     });
 
     return tokens;
+  }
+
+  @Get('/user')
+  @UseGuards(JwtGuard)
+  @ApiOkResponse({ type: UserEntity })
+  getUser(@GetUser('id') id: string): Promise<UserEntity> {
+    return this.authService.getUser(id);
+  }
+
+  @Get('/sessions')
+  @UseGuards(JwtGuard)
+  @ApiOkResponse({ type: [SessionEntity] })
+  getSessions(@GetUser('id') id: string): Promise<SessionEntity[]> {
+    return this.authService.getSessions(id);
   }
 }

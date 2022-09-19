@@ -1,4 +1,8 @@
 import { ReactNode } from "react";
+import { useEffect } from "react";
+
+import { useUser, useAxios } from "../../common/hooks";
+import { Configuration, AuthApi } from "../../common/utils/api-client";
 
 import Header from "../containers/Header";
 import Navbar from "../containers/Navbar";
@@ -8,14 +12,36 @@ type Props = {
   title: string;
 };
 
-const DefaultLayout = ({ children, title }: Props) => (
-  <div className="h-screen">
-    <Header title={title} />
+const configuration = new Configuration({});
 
-    <Navbar />
+const DefaultLayout = ({ children, title }: Props) => {
+  const axios = useAxios();
+  const { user, setUser } = useUser();
 
-    <div className="mt-20">{children}</div>
-  </div>
-);
+  useEffect(() => {
+    const authApi = new AuthApi(configuration, "", axios);
+
+    if (!user.email && user.loggedIn) {
+      authApi.authControllerGetUser().then(({ data }) => {
+        setUser({
+          loggedIn: true,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+        });
+      });
+    }
+  }, [axios, setUser, user.email, user.loggedIn]);
+
+  return (
+    <div className="h-screen">
+      <Header title={title} />
+
+      <Navbar />
+
+      <div className="mt-20">{children}</div>
+    </div>
+  );
+};
 
 export default DefaultLayout;

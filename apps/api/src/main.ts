@@ -12,7 +12,25 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use(cookieParser());
-  app.enableCors({ origin: 'http://localhost:3000' });
+
+  const whitelist = [
+    'https://ox.nathanrignall.uk',
+    'https://www.ox.nathanrignall.uk',
+    'https://dev.ox.nathanrignall.uk',
+    'https://testing.ox.nathanrignall.uk',
+    'http://local.ox.nathanrignall.uk',
+  ];
+
+  app.enableCors({
+    origin: function (origin, callback) {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS' + origin));
+      }
+    },
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('oscar-ox api')

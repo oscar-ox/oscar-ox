@@ -56,6 +56,25 @@ export interface CreateProductionDto {
 /**
  * 
  * @export
+ * @interface EmailEntity
+ */
+export interface EmailEntity {
+    /**
+     * 
+     * @type {string}
+     * @memberof EmailEntity
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof EmailEntity
+     */
+    'email': string;
+}
+/**
+ * 
+ * @export
  * @interface EmailLoginAuthDto
  */
 export interface EmailLoginAuthDto {
@@ -104,12 +123,6 @@ export interface EmailStartAuthDto {
  * @interface ErrorEntity
  */
 export interface ErrorEntity {
-    /**
-     * 
-     * @type {string}
-     * @memberof ErrorEntity
-     */
-    'error': string;
     /**
      * 
      * @type {Array<string>}
@@ -207,6 +220,49 @@ export interface ProductionEntity {
 /**
  * 
  * @export
+ * @interface SessionEntity
+ */
+export interface SessionEntity {
+    /**
+     * 
+     * @type {string}
+     * @memberof SessionEntity
+     */
+    'id': string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SessionEntity
+     */
+    'started': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SessionEntity
+     */
+    'revoked': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof SessionEntity
+     */
+    'userId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SessionEntity
+     */
+    'createdAt': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SessionEntity
+     */
+    'updatedAt': string;
+}
+/**
+ * 
+ * @export
  * @interface UpdateProductionDto
  */
 export interface UpdateProductionDto {
@@ -235,6 +291,18 @@ export interface UserEntity {
      * @memberof UserEntity
      */
     'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserEntity
+     */
+    'firstName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserEntity
+     */
+    'lastName': string;
 }
 
 /**
@@ -373,6 +441,64 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             // authentication bearer required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authControllerGetSessions: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/sessions`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authControllerGetUser: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/user`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
 
 
     
@@ -533,7 +659,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authControllerEmailLogin(emailLoginAuthDto: EmailLoginAuthDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserEntity>> {
+        async authControllerEmailLogin(emailLoginAuthDto: EmailLoginAuthDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmailEntity>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authControllerEmailLogin(emailLoginAuthDto, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -553,7 +679,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authControllerEmailStart(emailStartAuthDto: EmailStartAuthDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserEntity>> {
+        async authControllerEmailStart(emailStartAuthDto: EmailStartAuthDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EmailEntity>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authControllerEmailStart(emailStartAuthDto, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -564,6 +690,24 @@ export const AuthApiFp = function(configuration?: Configuration) {
          */
         async authControllerEmailVerify(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthEntity>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authControllerEmailVerify(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authControllerGetSessions(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<SessionEntity>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authControllerGetSessions(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authControllerGetUser(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserEntity>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authControllerGetUser(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -620,7 +764,7 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authControllerEmailLogin(emailLoginAuthDto: EmailLoginAuthDto, options?: any): AxiosPromise<UserEntity> {
+        authControllerEmailLogin(emailLoginAuthDto: EmailLoginAuthDto, options?: any): AxiosPromise<EmailEntity> {
             return localVarFp.authControllerEmailLogin(emailLoginAuthDto, options).then((request) => request(axios, basePath));
         },
         /**
@@ -638,7 +782,7 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authControllerEmailStart(emailStartAuthDto: EmailStartAuthDto, options?: any): AxiosPromise<UserEntity> {
+        authControllerEmailStart(emailStartAuthDto: EmailStartAuthDto, options?: any): AxiosPromise<EmailEntity> {
             return localVarFp.authControllerEmailStart(emailStartAuthDto, options).then((request) => request(axios, basePath));
         },
         /**
@@ -648,6 +792,22 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
          */
         authControllerEmailVerify(options?: any): AxiosPromise<AuthEntity> {
             return localVarFp.authControllerEmailVerify(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authControllerGetSessions(options?: any): AxiosPromise<Array<SessionEntity>> {
+            return localVarFp.authControllerGetSessions(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authControllerGetUser(options?: any): AxiosPromise<UserEntity> {
+            return localVarFp.authControllerGetUser(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -734,6 +894,26 @@ export class AuthApi extends BaseAPI {
      */
     public authControllerEmailVerify(options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).authControllerEmailVerify(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public authControllerGetSessions(options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authControllerGetSessions(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public authControllerGetUser(options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authControllerGetUser(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
