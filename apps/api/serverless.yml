@@ -60,10 +60,34 @@ functions:
       JWT_EMAIL_VERIFY_SECRET: ${env:JWT_EMAIL_VERIFY_SECRET}
     events:
     - http:
-        cors: true
         path: '/'
         method: any
+        cors:
+            origins:
+              - https://dev.ox.nathanrignall.uk
+              - http://local.ox.nathanrignall.uk
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - X-Amzn-Trace-Id
+            allowCredentials: true
     - http:
-        cors: true
         path: '{proxy+}'
-        method: any    
+        method: any
+        cors:
+            origins:
+              - https://dev.ox.nathanrignall.uk
+              - http://local.ox.nathanrignall.uk
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - X-Amzn-Trace-Id
+            allowCredentials: true
