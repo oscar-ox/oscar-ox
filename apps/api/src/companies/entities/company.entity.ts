@@ -1,7 +1,7 @@
-import { Production } from 'generated/client';
+import { Company } from 'generated/client';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ProductionEntity implements Production {
+export class CompanyEntity implements Company {
   @ApiProperty()
   id: string;
 
@@ -13,7 +13,4 @@ export class ProductionEntity implements Production {
 
   @ApiProperty()
   name: string;
-
-  @ApiProperty()
-  companyId: string;
 }

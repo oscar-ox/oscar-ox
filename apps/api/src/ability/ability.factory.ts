@@ -7,7 +7,7 @@ import {
   ExtractSubjectType,
 } from '@casl/ability';
 
-import { UserEntity } from 'src/auth/entity';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 export enum Action {
   Manage = 'manage',

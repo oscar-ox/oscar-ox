@@ -10,7 +10,8 @@ import { ForbiddenError } from '@casl/ability';
 
 import { AbilityFactory } from '../ability.factory';
 import { RequiredRule, CHECK_ABILITY } from '../decorator';
-import { UserEntity } from 'src/auth/entity';
+
+import { UserEntity } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AbilityGuard implements CanActivate {
