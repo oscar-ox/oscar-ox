@@ -1,16 +1,25 @@
 import { Injectable } from '@nestjs/common';
 
+import { PrismaService } from 'src/prisma/prisma.service';
+import { SessionEntity } from './entities/session.entity';
 @Injectable()
 export class SessionsService {
-  findAll() {
-    return `This action returns all sessions`;
+  constructor(private prisma: PrismaService) {}
+
+  findAll(userId: string): Promise<SessionEntity[]> {
+    return this.prisma.session.findMany({ where: { userId: userId } });
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} session`;
+  findOne(id: string, userId: string): Promise<SessionEntity> {
+    return this.prisma.session.findFirst({
+      where: { id: id, userId: userId },
+    });
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} session`;
+  end(id: string) {
+    return this.prisma.session.update({
+      where: { id: id },
+      data: { revoked: true },
+    });
   }
 }

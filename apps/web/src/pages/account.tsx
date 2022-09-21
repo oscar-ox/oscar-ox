@@ -3,8 +3,8 @@ import type { NextPage } from "next";
 import { useApi, useAxios, useUser } from "../common/hooks";
 import {
   Configuration,
-  AuthApi,
   SessionEntity,
+  SessionsApi,
 } from "../common/utils/api-client";
 
 import DefaultLayout from "../modules/layouts/default";
@@ -14,10 +14,10 @@ const configuration = new Configuration({});
 const Sessions = () => {
   const axios = useAxios();
 
-  const authApi = new AuthApi(configuration, "", axios);
+  const authApi = new SessionsApi(configuration, "", axios);
 
   const { data, error } = useApi<SessionEntity[]>(
-    authApi.authControllerGetSessions.bind(authApi)
+    authApi.sessionsControllerFindAll.bind(authApi)
   );
 
   if (data) {
