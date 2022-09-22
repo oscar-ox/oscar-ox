@@ -91,7 +91,7 @@ export function Navbar({ active_url }: NavbarProps) {
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
 
-                <NavbarLink title="Calender" url="/calendar" active={"/calendar" == active_url} />
+                <NavbarLink title="Calendar" url="/calendar" active={"/calendar" == active_url} />
 
                 <NavbarLink title="Productions" url="/productions" active={"/productions" == active_url} />
 
