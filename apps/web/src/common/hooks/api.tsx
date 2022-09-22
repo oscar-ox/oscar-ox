@@ -8,8 +8,7 @@ import { AxiosResponse } from "axios";
 export function useApi<Type>(
   api: (
     options?: AxiosRequestConfig | undefined
-  ) => Promise<AxiosResponse<Type>>,
-  key: string = "none"
+  ) => Promise<AxiosResponse<Type>>
 ): {
   loading: boolean;
   data: Type | undefined;
@@ -25,7 +24,7 @@ export function useApi<Type>(
       });
 
   // make the request
-  const { data, error } = useSWR<Type, ErrorEntity>(key, fetcher);
+  const { data, error } = useSWR<Type, ErrorEntity>(api.name, fetcher);
 
   // check if the data is loading
   const loading = !data && !error;

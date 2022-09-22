@@ -43,7 +43,7 @@ const DefaultLayout = ({ children, title }: Props) => {
 
       <Navbar />
 
-      <div className="mt-20">{children}</div>
+      <div className="container mx-auto mt-20">{children}</div>
     </div>
   );
 };
