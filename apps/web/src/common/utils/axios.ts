@@ -7,6 +7,9 @@ export const AxiosInstace1 = (refreshToken: () => Promise<string> | undefined = 
 
   // request interceptor for adding token
   axiosInstance.interceptors.request.use((config) => {
+    if (!config.headers) {
+      config.headers = {};
+    }
     // add token to request headers
     config.headers['Authorization'] = "Bearer " + token;
     config.baseURL = process.env.NEXT_PUBLIC_API_V1_URL;

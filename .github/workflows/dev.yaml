@@ -1,0 +1,169 @@
+name: Development CI/CD
+
+on:
+  push:
+    branches: [dev]
+
+  workflow_dispatch:
+
+env:
+  STAGE: dev
+
+jobs:
+
+  changes:
+    name: Changes
+    runs-on: self-hosted
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      web: ${{ steps.filter.outputs.web }}
+      static: ${{ steps.filter.outputs.static }}
+      listmonk: ${{ steps.filter.outputs.listmonk }}
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          api:
+            - 'apps/api/**'
+            - 'packages/kubernetes/api.yaml'
+          web:
+            - 'apps/web/**'
+            - 'packages/kubernetes/web.yaml'
+          static:
+            - 'packages/kubernetes/static.yaml'
+          listmonk:
+            - 'packages/kubernetes/listmonk.yaml'
+
+  build-api:
+    name: Build API
+    runs-on: self-hosted
+    needs: changes
+    if: ${{ needs.changes.outputs.api == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker context for Buildx
+        id: buildx-context
+        run: docker context create builders || docker context use builders
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          endpoint: builders
+          config-inline: |
+            [registry."registry.k8s1.flat.nathanrignall.uk:5000"]
+              ca=["/ca/nlrCA.pem"]
+
+      - name: Build and push the Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          file: {context}/apps/api/Dockerfile
+          tags: |
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:latest
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:${{ github.sha }}
+          secrets: |
+            "github-token=${{ secrets.GITHUB_TOKEN }}"
+
+  build-web:
+    name: Build Web
+    runs-on: self-hosted
+    needs: changes
+    if: ${{ needs.changes.outputs.web == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker context for Buildx
+        id: buildx-context
+        run: docker context create builders || docker context use builders
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          endpoint: builders
+          config-inline: |
+            [registry."registry.k8s1.flat.nathanrignall.uk:5000"]
+              ca=["/ca/nlrCA.pem"]
+
+      - name: Build and push the Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          file: {context}/apps/web/Dockerfile
+          tags: |
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:latest
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:${{ github.sha }}
+          secrets: |
+            "github-token=${{ secrets.GITHUB_TOKEN }}"
+          build-args: |
+            NEXT_PUBLIC_API_V1_URL=${{ secrets.API_V1_URL }}
+
+  deploy-api:
+    name: Deploy API
+    needs: [ build-api ]
+    runs-on: self-hosted
+    steps:
+      - name: Kubectl tool installer
+        uses: azure/setup-kubectl@v3.0
+        with:
+          version: 'v1.24.4'
+
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Set Kubernetes secrets
+        uses: azure/k8s-create-secret@v2
+        with:
+          namespace: oscar-ox-dev
+          secret-name: api-secrets
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          database_url: ${{ secrets.DATABASE_URL }}
+          jwt_secret: ${{ secrets.JWT_SECRET }}
+          jwt_refresh_secret: ${{ secrets.JWT_REFRESH_SECRET }}
+          jwt_email_register_secret: ${{ secrets.JWT_EMAIL_REGISTER_SECRET }}
+          jwt_email_verify_secret: ${{ secrets.JWT_EMAIL_VERIFY_SECRET }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: oscar-ox-dev
+          manifests: |
+            packages/kubernetes/api.yaml
+          images: |
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:${{ github.sha }}
+
+  deploy-web:
+    name: Deploy Web
+    needs: [ build-web ]
+    runs-on: self-hosted
+    steps:
+      - name: Kubectl tool installer
+        uses: azure/setup-kubectl@v3.0
+        with:
+          version: 'v1.24.4'
+
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v4.4
+        with:
+          namespace: oscar-ox-dev
+          manifests: |
+            packages/kubernetes/web.yaml
+          images: |
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:${{ github.sha }}

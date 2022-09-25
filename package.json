@@ -9,5 +9,6 @@
     },
     "dependencies": {
         "nps": "^5.10.0"
-    }
+    },
+    "packageManager": "yarn@1.22.19"
 }

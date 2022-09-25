@@ -13,10 +13,6 @@ module.exports = {
             default: `nps prepare.api`,
             api: `nps prepare.docker prisma.migrate.dev`,
             docker: "docker-compose up -d",
-            ci: {
-                web: `npm ci -w web`,
-                api: `npm ci -w api && nps prisma.generate`,
-            },
         },
         prisma: {
             generate: `cd ${apiPath} && npx prisma generate`,
@@ -27,9 +23,12 @@ module.exports = {
         },
         build: {
             default: "npx turbo run build",
-            ci: {
-                web: `cd ${webPath} && npm run build`,
-                api: `cd ${apiPath} && npm run build`,
+        },
+        docker: {
+            build: {
+                default: "nps docker.build.web docker.build.api",
+                web: `docker build -t web . -f ${webPath}/Dockerfile`,
+                api: `docker build -t api . -f ${apiPath}/Dockerfile`,
             },
         },
         dev: "npx turbo run dev",
