@@ -17,16 +17,9 @@ import {
   EmailLoginAuthDto,
   EmailStartAuthDto,
 } from './dto';
-import {
-  AuthEntity,
-  UserEntity,
-  EmailEntity,
-  ErrorEntity,
-  SessionEntity,
-} from './entity';
+import { AuthEntity, EmailEntity, ErrorEntity } from './entity';
 import { GetUser } from './decorator';
 import {
-  JwtGuard,
   JwtEmailRegisterGuard,
   JwtEmailVerifyGuard,
   JwtRefreshGuard,
@@ -146,19 +139,5 @@ export class AuthController {
     });
 
     return tokens;
-  }
-
-  @Get('/user')
-  @UseGuards(JwtGuard)
-  @ApiOkResponse({ type: UserEntity })
-  getUser(@GetUser('id') id: string): Promise<UserEntity> {
-    return this.authService.getUser(id);
-  }
-
-  @Get('/sessions')
-  @UseGuards(JwtGuard)
-  @ApiOkResponse({ type: [SessionEntity] })
-  getSessions(@GetUser('id') id: string): Promise<SessionEntity[]> {
-    return this.authService.getSessions(id);
   }
 }

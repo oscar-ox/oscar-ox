@@ -23,10 +23,8 @@ const EmailVerify = () => {
   const [error, setError] = useState<ErrorEntity | null>();
 
   useEffect(() => {
-    console.log("call");
     if (router.query.token) {
       if (typeof router.query.token === "string") {
-        console.log("oo");
         const emailLoginToken = router.query.token;
 
         const authApi = new AuthApi(

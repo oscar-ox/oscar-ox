@@ -2,7 +2,11 @@ import { ReactNode } from "react";
 import { useEffect } from "react";
 
 import { useUser, useAxios } from "../../common/hooks";
-import { Configuration, AuthApi } from "../../common/utils/api-client";
+import {
+  Configuration,
+  AuthApi,
+  UsersApi,
+} from "../../common/utils/api-client";
 
 import Header from "../containers/Header";
 import Navbar from "../containers/Navbar";
@@ -19,10 +23,10 @@ const DefaultLayout = ({ children, title }: Props) => {
   const { user, setUser } = useUser();
 
   useEffect(() => {
-    const authApi = new AuthApi(configuration, "", axios);
+    const authApi = new UsersApi(configuration, "", axios);
 
     if (!user.email && user.loggedIn) {
-      authApi.authControllerGetUser().then(({ data }) => {
+      authApi.usersControllerFindSelf().then(({ data }) => {
         setUser({
           loggedIn: true,
           firstName: data.firstName,
@@ -39,7 +43,7 @@ const DefaultLayout = ({ children, title }: Props) => {
 
       <Navbar />
 
-      <div className="mt-20">{children}</div>
+      <div className="container mx-auto mt-20">{children}</div>
     </div>
   );
 };

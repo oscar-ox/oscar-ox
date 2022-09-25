@@ -20,14 +20,13 @@ type Props = {
 };
 
 const VARIANT_MAPS: Record<Variant, string> = {
-  [Variant.LIGHT]:
-    "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
+  [Variant.LIGHT]: "border-2 border-slate-200",
 };
 
 const PADDING_MAPS: Record<Padding, string> = {
-  [Padding.SMALL]: "px-4 py-8",
+  [Padding.SMALL]: "px-4 py-5",
   [Padding.MEDIUM]: "px-5 py-10",
-  [Padding.LARGE]: "px-6 py-12",
+  [Padding.LARGE]: "px-6 py-15",
 };
 
 export function Card(props: Props) {

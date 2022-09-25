@@ -9,7 +9,9 @@ import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
 import { AbilityModule } from './ability/ability.module';
 import { ProductionsModule } from './productions/productions.module';
-import { UserModule } from './user/user.module';
+import { CompaniesModule } from './companies/companies.module';
+import { UsersModule } from './users/users.module';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { UserModule } from './user/user.module';
     AuthModule,
     AbilityModule,
     ProductionsModule,
-    UserModule,
+    CompaniesModule,
+    UsersModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

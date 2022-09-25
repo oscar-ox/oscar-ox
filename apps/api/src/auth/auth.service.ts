@@ -16,7 +16,7 @@ import {
   EmailLoginAuthDto,
   EmailStartAuthDto,
 } from './dto';
-import { AuthEntity, UserEntity, EmailEntity, SessionEntity } from './entity';
+import { AuthEntity, EmailEntity } from './entity';
 import { Session, User } from 'generated/client';
 
 @Injectable()
@@ -239,14 +239,6 @@ export class AuthService {
 
     // return the two tokens
     return this.signAuthTokens(session.userId, session.id);
-  }
-
-  getUser(id: string): Promise<UserEntity> {
-    return this.prisma.user.findUnique({ where: { id: id } });
-  }
-
-  getSessions(id: string): Promise<SessionEntity[]> {
-    return this.prisma.session.findMany({ where: { userId: id } });
   }
 
   async signAuthTokens(userId: string, sessionId: string): Promise<AuthEntity> {

@@ -1,10 +1,15 @@
-//src/products/entities/product.entity.ts
 import { Session } from 'generated/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SessionEntity implements Session {
   @ApiProperty()
   id: string;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 
   @ApiProperty()
   started: boolean;
@@ -14,10 +19,4 @@ export class SessionEntity implements Session {
 
   @ApiProperty()
   userId: string;
-
-  @ApiProperty()
-  createdAt: Date;
-
-  @ApiProperty()
-  updatedAt: Date;
 }
