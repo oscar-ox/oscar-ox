@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api:latest
+        image: registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api:latest
         ports:
         - containerPort: 3000
         env:

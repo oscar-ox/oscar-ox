@@ -67,8 +67,8 @@ jobs:
           push: true
           file: apps/api/Dockerfile
           tags: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:latest
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-$STAGE:latest
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-$STAGE:${{ github.sha }}
           secrets: |
             "github-token=${{ secrets.GITHUB_TOKEN }}"
 
@@ -100,8 +100,8 @@ jobs:
           push: true
           file: apps/web/Dockerfile
           tags: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:latest
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-$STAGE:latest
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-$STAGE:${{ github.sha }}
           secrets: |
             "github-token=${{ secrets.GITHUB_TOKEN }}"
           build-args: |
@@ -146,7 +146,7 @@ jobs:
           manifests: |
             packages/kubernetes/api.yaml
           images: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-$STAGE:${{ github.sha }}
 
   deploy-web:
     name: Deploy Web
@@ -174,4 +174,4 @@ jobs:
           manifests: |
             packages/kubernetes/web.yaml
           images: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-$STAGE:${{ github.sha }}
