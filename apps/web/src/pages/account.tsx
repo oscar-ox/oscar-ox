@@ -24,7 +24,7 @@ const Session = ({ session }: SessionProps) => {
     <Card padding={Card.padding.SMALL}>
       <div className="flex">
         <div>Started - {dateString} </div>
-        <div>LastUsed - {session.updatedAt.toLocaleString()} </div>
+        <div>Last Used - {session.updatedAt.toLocaleString()} </div>
         <div>Revoked - {session.revoked ? "True" : "False"} </div>
         <div>Started - {session.started ? "True" : "False"} </div>
       </div>
