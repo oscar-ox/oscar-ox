@@ -12,9 +12,6 @@ env:
 jobs:
 
   changes:
-    - name: Checkout
-      uses: actions/checkout@v2
-
     name: Changes
     runs-on: self-hosted
     outputs:
@@ -23,7 +20,11 @@ jobs:
       static: ${{ steps.filter.outputs.static }}
       listmonk: ${{ steps.filter.outputs.listmonk }}
     steps:
-    - uses: dorny/paths-filter@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Compare
+      uses: dorny/paths-filter@v2
       id: filter
       with:
         filters: |
