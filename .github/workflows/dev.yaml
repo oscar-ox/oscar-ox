@@ -2,7 +2,7 @@ name: Development CI/CD
 
 on:
   push:
-    branches: [dev]
+    branches: [ dev ]
 
   workflow_dispatch:
 
@@ -38,6 +38,7 @@ jobs:
   build-api:
     name: Build API
     runs-on: self-hosted
+    environment: dev
     needs: changes
     if: ${{ needs.changes.outputs.api == 'true' }}
     steps:
@@ -60,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          file: {context}/apps/api/Dockerfile
+          file: apps/api/Dockerfile
           tags: |
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:latest
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/api-$STAGE:${{ github.sha }}
@@ -70,6 +71,7 @@ jobs:
   build-web:
     name: Build Web
     runs-on: self-hosted
+    environment: dev
     needs: changes
     if: ${{ needs.changes.outputs.web == 'true' }}
     steps:
@@ -86,13 +88,13 @@ jobs:
           endpoint: builders
           config-inline: |
             [registry."registry.k8s1.flat.nathanrignall.uk:5000"]
-              ca=["/ca/nlrCA.pem"]
+            ca=["/ca/nlrCA.pem"]
 
       - name: Build and push the Docker image
         uses: docker/build-push-action@v3
         with:
           push: true
-          file: {context}/apps/web/Dockerfile
+          file: apps/web/Dockerfile
           tags: |
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:latest
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox/web-$STAGE:${{ github.sha }}
@@ -105,6 +107,7 @@ jobs:
     name: Deploy API
     needs: [ build-api ]
     runs-on: self-hosted
+    environment: dev
     steps:
       - name: Kubectl tool installer
         uses: azure/setup-kubectl@v3.0
@@ -145,6 +148,7 @@ jobs:
     name: Deploy Web
     needs: [ build-web ]
     runs-on: self-hosted
+    environment: dev
     steps:
       - name: Kubectl tool installer
         uses: azure/setup-kubectl@v3.0
