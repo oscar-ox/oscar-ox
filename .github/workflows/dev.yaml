@@ -106,7 +106,7 @@ jobs:
           secrets: |
             "github-token=${{ secrets.GITHUB_TOKEN }}"
           build-args: |
-            NEXT_PUBLIC_API_V1_URL=${{ secrets.API_V1_URL }}
+            API_V1_URL=${{ secrets.API_V1_URL }}
 
   deploy-api:
     name: Deploy API
