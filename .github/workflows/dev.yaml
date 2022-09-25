@@ -12,6 +12,9 @@ env:
 jobs:
 
   changes:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     name: Changes
     runs-on: self-hosted
     outputs:
