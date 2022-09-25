@@ -20,6 +20,8 @@ WORKDIR /app
 COPY --from=installer /app/ .
 COPY --from=turbo /app/out/full/ .
 COPY .gitignore .gitignore
+ARG API_V1_URL
+ENV NEXT_PUBLIC_API_URL $API_V1_URL
 RUN yarn turbo run build --scope=web --include-dependencies --no-deps
 
 FROM node:16-alpine as runner
