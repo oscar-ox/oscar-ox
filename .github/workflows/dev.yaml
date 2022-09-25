@@ -6,9 +6,6 @@ on:
 
   workflow_dispatch:
 
-env:
-  STAGE: dev
-
 jobs:
 
   changes:
@@ -31,13 +28,17 @@ jobs:
           api:
             - 'apps/api/**'
             - 'packages/kubernetes/api.yaml'
+            - '.github/**'
           web:
             - 'apps/web/**'
             - 'packages/kubernetes/web.yaml'
+            - '.github/**'
           static:
             - 'packages/kubernetes/static.yaml'
+            - '.github/**'
           listmonk:
             - 'packages/kubernetes/listmonk.yaml'
+            - '.github/**'
 
   build-api:
     name: Build API
@@ -67,8 +68,8 @@ jobs:
           push: true
           file: apps/api/Dockerfile
           tags: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-$STAGE:latest
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-dev:latest
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-dev:${{ github.sha }}
           secrets: |
             "github-token=${{ secrets.GITHUB_TOKEN }}"
 
@@ -100,8 +101,8 @@ jobs:
           push: true
           file: apps/web/Dockerfile
           tags: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-$STAGE:latest
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-dev:latest
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-dev:${{ github.sha }}
           secrets: |
             "github-token=${{ secrets.GITHUB_TOKEN }}"
           build-args: |
@@ -146,7 +147,7 @@ jobs:
           manifests: |
             packages/kubernetes/api.yaml
           images: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-api-dev:${{ github.sha }}
 
   deploy-web:
     name: Deploy Web
@@ -174,4 +175,4 @@ jobs:
           manifests: |
             packages/kubernetes/web.yaml
           images: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-$STAGE:${{ github.sha }}
+            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-web-dev:${{ github.sha }}
