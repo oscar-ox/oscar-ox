@@ -57,15 +57,15 @@ jobs:
           private_key: '${{ secrets.VPN_PRIVATE }}'
           preshared_key: '${{ secrets.VPN_PRESHARED }}'
 
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Get the certificate
         run: 'echo "$NLR_CA" > ${{github.workspace}}/ca.pem'
         shell: bash
         env:
           SSH_KEY: ${{secrets.NLR_CA}}
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
+          
       - name: Set up Docker context for Buildx
         id: buildx-context
         run: docker context create builders || docker context use builders
