@@ -58,8 +58,10 @@ jobs:
           preshared_key: '${{ secrets.VPN_PRESHARED }}'
 
       - name: Get the certificate
+        run: 'echo "$NLR_CA" > key'
         shell: bash
-        run: echo ${{ secrets.NLR_CA }}' > /ca/nlrCA.pem
+        env:
+          SSH_KEY: ${{secrets.NLR_CA}}
 
       - name: Checkout
         uses: actions/checkout@v2
