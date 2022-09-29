@@ -57,6 +57,9 @@ jobs:
           private_key: '${{ secrets.VPN_PRIVATE }}'
           preshared_key: '${{ secrets.VPN_PRESHARED }}'
 
+      - name: Get the certificate
+        run: echo ${{ secrets.NLR_CA }}' > /ca/nlrCA.pem
+
       - name: Checkout
         uses: actions/checkout@v2
 
