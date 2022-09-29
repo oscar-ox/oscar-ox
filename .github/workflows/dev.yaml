@@ -131,13 +131,7 @@ jobs:
         with:
           namespace: oscar-ox-dev
           secret-name: api-secrets
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          database_url: ${{ secrets.DATABASE_URL }}
-          jwt_secret: ${{ secrets.JWT_SECRET }}
-          jwt_refresh_secret: ${{ secrets.JWT_REFRESH_SECRET }}
-          jwt_email_register_secret: ${{ secrets.JWT_EMAIL_REGISTER_SECRET }}
-          jwt_email_verify_secret: ${{ secrets.JWT_EMAIL_VERIFY_SECRET }}
+          string-data: ${{ secrets.API_CONFIG }}
 
       - name: Checkout source code
         uses: actions/checkout@v3
