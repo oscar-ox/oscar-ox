@@ -106,6 +106,9 @@ jobs:
           private_key: '${{ secrets.VPN_PRIVATE }}'
           preshared_key: '${{ secrets.VPN_PRESHARED }}'
 
+      - name: Ping
+        run: ping 10.18.4.1 -t 1 
+
       - name: Checkout
         uses: actions/checkout@v2
 
