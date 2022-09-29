@@ -58,7 +58,7 @@ jobs:
           preshared_key: '${{ secrets.VPN_PRESHARED }}'
 
       - name: Get the certificate
-        run: 'echo "$NLR_CA" > /ca/nlrCA.pem'
+        run: 'echo "$NLR_CA" > /nlrCA.pem'
         shell: bash
         env:
           SSH_KEY: ${{secrets.NLR_CA}}
@@ -76,7 +76,7 @@ jobs:
           endpoint: builders
           config-inline: |
             [registry."registry.k8s1.flat.nathanrignall.uk:5000"]
-              ca=["/ca/nlrCA.pem"]
+              ca=["/nlrCA.pem"]
 
       - name: Build and push the Docker image
         uses: docker/build-push-action@v3
