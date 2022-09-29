@@ -125,7 +125,7 @@ jobs:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
       - name: Set Kubernetes secrets
-        uses: azure/k8s-create-secret@v2
+        uses: azure/k8s-create-secret@v4
         with:
           namespace: oscar-ox-dev
           secret-name: api-secrets
