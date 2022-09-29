@@ -65,7 +65,7 @@ jobs:
         shell: bash
         env:
           SSH_KEY: ${{secrets.NLR_CA}}
-          
+
       - name: Set up Docker context for Buildx
         id: buildx-context
         run: docker context create builders || docker context use builders
@@ -91,11 +91,21 @@ jobs:
 
   build-web:
     name: Build Web
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: dev
     needs: changes
     if: ${{ needs.changes.outputs.web == 'true' }}
     steps:
+      - name: Set up WireGuard
+        uses: egor-tensin/setup-wireguard@v1
+        with:
+          endpoint: '${{ secrets.VPN_ENDPOINT }}'
+          endpoint_public_key: '${{ secrets.VPN_ENDPOINT_PUBLIC }}'
+          ips: '10.99.1.2/32'
+          allowed_ips: '10.18.4.1/22'
+          private_key: '${{ secrets.VPN_PRIVATE }}'
+          preshared_key: '${{ secrets.VPN_PRESHARED }}'
+          
       - name: Checkout
         uses: actions/checkout@v2
 
