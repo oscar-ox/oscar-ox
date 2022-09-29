@@ -47,16 +47,15 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.api == 'true' }}
     steps:
-
-    - name: Set up WireGuard
-      uses: egor-tensin/setup-wireguard@v1
-      with:
-        endpoint: '${{ secrets.VPN_ENDPOINT }}'
-        endpoint_public_key: '${{ secrets.VPN_ENDPOINT_PUBLIC }}'
-        ips: '10.99.1.2/32'
-        allowed_ips: '10.18.4.1/22'
-        private_key: '${{ secrets.VPN_PRIVATE }}'
-        preshared_key: '${{ secrets.VPN_PRESHARED }}'
+      - name: Set up WireGuard
+        uses: egor-tensin/setup-wireguard@v1
+        with:
+          endpoint: '${{ secrets.VPN_ENDPOINT }}'
+          endpoint_public_key: '${{ secrets.VPN_ENDPOINT_PUBLIC }}'
+          ips: '10.99.1.2/32'
+          allowed_ips: '10.18.4.1/22'
+          private_key: '${{ secrets.VPN_PRIVATE }}'
+          preshared_key: '${{ secrets.VPN_PRESHARED }}'
 
       - name: Checkout
         uses: actions/checkout@v2
