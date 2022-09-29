@@ -10,7 +10,7 @@ jobs:
 
   changes:
     name: Changes
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       api: ${{ steps.filter.outputs.api }}
       web: ${{ steps.filter.outputs.web }}
