@@ -89,6 +89,7 @@ jobs:
         with:
           push: true
           file: apps/api/Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-api:latest
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-api:${{ github.sha }}
@@ -144,6 +145,7 @@ jobs:
         with:
           push: true
           file: apps/web/Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:latest
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:${{ github.sha }}
