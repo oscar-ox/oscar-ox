@@ -1,35 +1,42 @@
-
 const path = require("path");
 
 const apiPath = path.resolve(__dirname, "apps/api");
 const webPath = path.resolve(__dirname, "apps/web");
 
-const ciApiPath = path.resolve(__dirname, "out/apps/api");
-const ciWebPath = path.resolve(__dirname, "out/apps/web");
-
 module.exports = {
     scripts: {
         prepare: {
-            default: `nps prepare.api`,
+            default: `nps prepare.web prepare.api`,
+            web: `yarn`,
             api: `nps prepare.docker prisma.migrate.dev`,
-            docker: "docker-compose up -d",
+            docker: "docker-compose -f ./packages/docker/docker-compose.dev.yaml -p oscar-ox up -d",
+            listmonk: "docker-compose -f ./packages/docker/docker-compose.dev.yaml -p oscar-ox run --rm listmonk ./listmonk --install",
+            ci: {
+                web: `npx turbo prune --scope=web && cd out && yarn install --frozen-lockfile`,
+                api: `npx turbo prune --scope=api && cd out && yarn install --frozen-lockfile && nps prisma.generate`,
+            },
         },
         prisma: {
             generate: `cd ${apiPath} && npx prisma generate`,
             studio: `cd ${apiPath} && npx prisma studio`,
             migrate: {
-                dev: `cd ${apiPath} && npx prisma migrate dev --skip-seed`,
+                dev: `cd ${apiPath} && npx prisma migrate dev`,
             },
         },
         build: {
             default: "npx turbo run build",
+            ci: {
+                web: "cd out && npm run build",
+                api: "cd out && npm run build",
+            },
         },
         docker: {
             build: {
                 default: "nps docker.build.web docker.build.api",
-                web: `docker build -t web . -f ${webPath}/Dockerfile`,
-                api: `docker build -t api . -f ${apiPath}/Dockerfile`,
+                web: `docker build -t oscar-ox:web-dev . -f ${webPath}/Dockerfile`,
+                api: `docker build -t oscar-ox:api-dev . -f ${apiPath}/Dockerfile`,
             },
+            deploy: "docker-compose -f ./packages/docker/docker-compose.prod.yaml -p oscar-ox up -d --build",
         },
         dev: "npx turbo run dev",
     },

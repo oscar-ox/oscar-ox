@@ -19,6 +19,7 @@ async function bootstrap() {
     'https://dev.ox.nathanrignall.uk',
     'https://testing.ox.nathanrignall.uk',
     'http://local.ox.nathanrignall.uk',
+    'http://web.ox.local',
     'http://localhost:4000',
   ];
 

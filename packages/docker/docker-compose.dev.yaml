@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+  proxy:
+    image: nginx:latest
+    volumes:
+      - ../nginx-config/nginx.dev.conf:/etc/nginx/nginx.conf
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - 80:80
+    restart: unless-stopped
+
+  api_db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_PASSWORD: api
+      MYSQL_USER: api
+      MYSQL_DATABASE: api
+    volumes:
+      - api_db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    restart: unless-stopped
+
+  umami_db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: umami
+    volumes:
+      - umami_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    environment:
+      DATABASE_URL: postgresql://umami:umami@umami_db:5432/umami
+      DATABASE_TYPE: postgresql
+      HASH_SALT: replace-me-with-a-random-string
+    depends_on:
+      - umami_db
+    restart: unless-stopped
+
+  listmonk_db:
+    image: postgres:13
+    environment:
+      - POSTGRES_PASSWORD=listmonk
+      - POSTGRES_USER=listmonk
+      - POSTGRES_DB=listmonk
+    volumes:
+      - listmonk_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listmonk"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  listmonk:
+    image: listmonk/listmonk:latest
+    environment:
+      - TZ=Etc/UTC
+      - LISTMONK_app__address=0.0.0.0:9000
+      - LISTMONK_app__admin_username=admin
+      - LISTMONK_app__admin_password=admin
+      - LISTMONK_db__host=listmonk_db
+      - LISTMONK_db__port=5432
+      - LISTMONK_db__user=listmonk
+      - LISTMONK_db__password=listmonk
+      - LISTMONK_db__database=listmonk
+      - LISTMONK_db__ssl_mode=disable
+    volumes:
+      - ../listmonk/config.toml:/listmonk/config.toml
+    depends_on:
+      - listmonk_db
+    restart: unless-stopped
+
+volumes:
+  api_db_data:
+  listmonk_db_data:
+  umami_db_data:
+
