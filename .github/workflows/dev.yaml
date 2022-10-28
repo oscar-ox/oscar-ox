@@ -58,7 +58,7 @@ jobs:
 
       - name: Copy cert to trust local registry
         shell: bash
-        run: sudo ./packages/scripts/cert.sh
+        run: sudo {{github.workspace}}/packages/scripts/cert.sh
 
       - name: Set up Docker context for Buildx
         id: buildx-context
@@ -108,7 +108,7 @@ jobs:
       
       - name: Copy cert to trust local registry
         shell: bash
-        run: sudo ./packages/scripts/cert.sh
+        run: sudo {{github.workspace}}/packages/scripts/cert.sh
 
       - name: Set up Docker context for Buildx
         id: buildx-context
