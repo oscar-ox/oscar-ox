@@ -56,6 +56,10 @@ jobs:
         env:
           NLR_CA: ${{secrets.NLR_CA}}
 
+      - name: Copy cert to trust local registry
+        shell: bash
+        run: ./packages/scripts/cert.sh
+
       - name: Set up Docker context for Buildx
         id: buildx-context
         run: docker context create builders || docker context use builders
@@ -101,6 +105,10 @@ jobs:
         shell: bash
         env:
           NLR_CA: ${{secrets.NLR_CA}}
+      
+      - name: Copy cert to trust local registry
+        shell: bash
+        run: ./packages/scripts/cert.sh
 
       - name: Set up Docker context for Buildx
         id: buildx-context
