@@ -14,11 +14,8 @@ async function bootstrap() {
   app.use(cookieParser());
 
   const whitelist = [
-    'https://ox.nathanrignall.uk',
-    'https://www.ox.nathanrignall.uk',
-    'https://dev.ox.nathanrignall.uk',
-    'https://testing.ox.nathanrignall.uk',
-    'http://local.ox.nathanrignall.uk',
+    'https://dev.ox.nlr.app',
+    'https://ox.nlr.app',
     'http://web.ox.local',
     'http://localhost:4000',
   ];
