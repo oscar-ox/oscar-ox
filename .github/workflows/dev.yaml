@@ -153,8 +153,6 @@ jobs:
             "github-token=${{ secrets.GITHUB_TOKEN }}"
           build-args: |
             API_V1_URL=${{ secrets.API_V1_URL }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=ma
 
   deploy-api:
     name: Deploy API
