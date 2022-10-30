@@ -3,6 +3,9 @@ const path = require("path");
 const apiPath = path.resolve(__dirname, "apps/api");
 const webPath = path.resolve(__dirname, "apps/web");
 
+const ciApiPath = path.resolve(__dirname, "out/apps/api");
+const ciWebPath = path.resolve(__dirname, "out/apps/web");
+
 module.exports = {
     scripts: {
         prepare: {
@@ -12,8 +15,8 @@ module.exports = {
             docker: "docker-compose -f ./packages/docker/docker-compose.dev.yaml -p oscar-ox up -d",
             listmonk: "docker-compose -f ./packages/docker/docker-compose.dev.yaml -p oscar-ox run --rm listmonk ./listmonk --install",
             ci: {
-                web: `npx turbo prune --scope=web && cd out && yarn install --frozen-lockfile`,
-                api: `npx turbo prune --scope=api && cd out && yarn install --frozen-lockfile && nps prisma.generate`,
+                web: `npx turbo prune --scope=web && cd out && yarn install --frozen-lockfile && yarn cache clean`,
+                api: `npx turbo prune --scope=api && cd out && yarn install --frozen-lockfile && yarn cache clean && nps prisma.ci.generate`,
             },
         },
         prisma: {
@@ -22,6 +25,9 @@ module.exports = {
             migrate: {
                 dev: `cd ${apiPath} && npx prisma migrate dev`,
             },
+            ci: {
+                generate: `cd ${ciApiPath} && npx prisma generate`,
+            }
         },
         build: {
             default: "npx turbo run build",
