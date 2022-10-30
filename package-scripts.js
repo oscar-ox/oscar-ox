@@ -10,13 +10,13 @@ module.exports = {
     scripts: {
         prepare: {
             default: `nps prepare.web prepare.api`,
-            web: `yarn`,
+            web: `pnpm i`,
             api: `nps prepare.docker prisma.migrate.dev`,
             docker: "docker-compose -f ./packages/docker/docker-compose.dev.yaml -p oscar-ox up -d",
             listmonk: "docker-compose -f ./packages/docker/docker-compose.dev.yaml -p oscar-ox run --rm listmonk ./listmonk --install",
             ci: {
-                web: `npx turbo prune --scope=web && cd out && yarn install --frozen-lockfile && yarn cache clean`,
-                api: `npx turbo prune --scope=api && cd out && yarn install --frozen-lockfile && yarn cache clean && nps prisma.ci.generate`,
+                web: `npx turbo prune --scope=web && cd out && pnpm i --frozen-lockfile`,
+                api: `npx turbo prune --scope=api && cd out && pnpm i --frozen-lockfile && nps prisma.ci.generate`,
             },
         },
         prisma: {

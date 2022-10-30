@@ -2,7 +2,7 @@ FROM node:16-alpine AS installer
 RUN apk update
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-RUN yarn global add turbo nps
+RUN npm install -g pnpm turbo nps
 COPY . .
 RUN nps prepare.ci.web 
 
@@ -10,7 +10,7 @@ FROM node:16-alpine AS builder
 RUN apk update
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-RUN yarn global add nps
+RUN npm install -g pnpm turbo nps
 COPY --from=installer /app  .
 COPY .gitignore .gitignore
 ARG API_V1_URL

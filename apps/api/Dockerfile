@@ -1,14 +1,14 @@
 FROM node:16-buster AS installer
 RUN apt update
 WORKDIR /app
-RUN yarn global add turbo nps
+RUN npm install -g pnpm turbo nps
 COPY . .
 RUN nps prepare.ci.api 
 
 FROM node:16-buster AS builder
 RUN apt update
 WORKDIR /app
-RUN yarn global add nps
+RUN npm install -g pnpm turbo nps
 COPY --from=installer /app  .
 COPY .gitignore .gitignore
 ARG API_V1_URL
