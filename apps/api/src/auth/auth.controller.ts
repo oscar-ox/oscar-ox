@@ -51,7 +51,7 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
-      domain: '.ox.nathanrignall.uk',
+      domain: '.ox.nlr.app',
     });
 
     return tokens;
@@ -82,7 +82,7 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
-      domain: '.ox.nathanrignall.uk',
+      domain: '.ox.nlr.app',
     });
 
     return tokens;
@@ -109,7 +109,7 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
-      domain: '.ox.nathanrignall.uk',
+      domain: '.ox.nlr.app',
     });
 
     return tokens;
@@ -135,7 +135,7 @@ export class AuthController {
     response.cookie('refreshToken', tokens.refreshToken, {
       sameSite: 'strict',
       httpOnly: true,
-      domain: '.ox.nathanrignall.uk',
+      domain: '.ox.nlr.app',
     });
 
     return tokens;
