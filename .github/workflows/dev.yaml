@@ -42,7 +42,7 @@ jobs:
 
   build-api:
     name: Build API
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: dev
     needs: changes
     if: ${{ needs.changes.outputs.api == 'true' }}
@@ -59,11 +59,6 @@ jobs:
       - name: Copy cert to trust local registry
         shell: bash
         run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: 'arm64'
 
       - name: Set up Docker context for Buildx
         id: buildx-context
@@ -89,7 +84,7 @@ jobs:
         with:
           push: true
           file: apps/api/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: |
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-api:latest
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-api:${{ github.sha }}
@@ -98,7 +93,7 @@ jobs:
 
   build-web:
     name: Build Web
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: dev
     needs: changes
     if: ${{ needs.changes.outputs.web == 'true' }}
@@ -115,11 +110,6 @@ jobs:
       - name: Copy cert to trust local registry
         shell: bash
         run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: 'arm64'
 
       - name: Set up Docker context for Buildx
         id: buildx-context
@@ -145,7 +135,7 @@ jobs:
         with:
           push: true
           file: apps/web/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: |
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:latest
             registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:${{ github.sha }}

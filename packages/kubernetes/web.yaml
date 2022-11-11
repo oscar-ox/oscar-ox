@@ -17,6 +17,7 @@ spec:
       containers:
       - name: web
         image: registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
 ---
@@ -34,7 +35,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: oscar-ox-dev-web-ingress
+  name: web-ingress
 spec:
   rules:
   - host: dev.ox.nlr.app
