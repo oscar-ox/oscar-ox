@@ -26,26 +26,6 @@ services:
       - "3306"
     restart: unless-stopped
 
-  umami_db:
-    image: postgres:12-alpine
-    environment:
-      POSTGRES_DB: umami
-      POSTGRES_USER: umami
-      POSTGRES_PASSWORD: umami
-    volumes:
-      - umami_db_data:/var/lib/postgresql/data
-    restart: unless-stopped
-
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    environment:
-      DATABASE_URL: postgresql://umami:umami@umami_db:5432/umami
-      DATABASE_TYPE: postgresql
-      HASH_SALT: replace-me-with-a-random-string
-    depends_on:
-      - umami_db
-    restart: unless-stopped
-
   listmonk_db:
     image: postgres:13
     environment:
