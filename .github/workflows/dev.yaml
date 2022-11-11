@@ -56,9 +56,9 @@ jobs:
         env:
           NLR_CA: ${{secrets.NLR_CA}}
 
-      - name: Copy cert to trust local registry
-        shell: bash
-        run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
+      # - name: Copy cert to trust local registry
+      #   shell: bash
+      #   run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
 
       - name: Set up Docker context for Buildx
         id: buildx-context
@@ -107,9 +107,9 @@ jobs:
         env:
           NLR_CA: ${{secrets.NLR_CA}}
       
-      - name: Copy cert to trust local registry
-        shell: bash
-        run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
+      # - name: Copy cert to trust local registry
+      #   shell: bash
+      #   run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
 
       - name: Set up Docker context for Buildx
         id: buildx-context
