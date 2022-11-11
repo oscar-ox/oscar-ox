@@ -18,7 +18,7 @@ spec:
       - name: api
         image: registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-api:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 4000
         env:
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
@@ -65,7 +65,7 @@ spec:
     app: api
   ports:
     - name: http
-      port: 3000
+      port: 4000
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -82,4 +82,4 @@ spec:
           service:
             name: api
             port:
-              number: 3000
+              number: 4000

@@ -33,7 +33,7 @@ export class MailService {
           Data: 'Test email',
         },
       },
-      Source: 'sender@mail.ox.nathanrignall.uk',
+      Source: 'no-reply@ox.nlr.app',
     });
 
     this.ses.send(command);
@@ -64,7 +64,7 @@ export class MailService {
           Data: 'Welcome to Oscar Ox',
         },
       },
-      Source: '"Oscar Ox" <no-reply@mail.ox.nathanrignall.uk>',
+      Source: '"Oscar Ox" <no-reply@ox.nlr.app>',
     });
 
     this.ses.send(command);
@@ -91,7 +91,7 @@ export class MailService {
           Data: 'Login Link for Oscar Ox',
         },
       },
-      Source: '"Oscar Ox" <no-reply@mail.ox.nathanrignall.uk>',
+      Source: '"Oscar Ox" <no-reply@ox.nlr.app>',
     });
 
     this.ses.send(command);

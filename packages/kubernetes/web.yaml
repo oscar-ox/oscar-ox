@@ -17,7 +17,6 @@ spec:
       containers:
       - name: web
         image: registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:latest
-        imagePullPolicy: Always
         ports:
         - containerPort: 3000
 ---
