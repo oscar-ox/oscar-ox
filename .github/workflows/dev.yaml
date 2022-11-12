@@ -28,17 +28,11 @@ jobs:
           api:
             - 'apps/api/**'
             - 'packages/kubernetes/api.yaml'
-            - '.github/**'
+            - '.github/workflows/**'
           web:
             - 'apps/web/**'
             - 'packages/kubernetes/web.yaml'
-            - '.github/**'
-          static:
-            - 'packages/kubernetes/static.yaml'
-            - '.github/**'
-          listmonk:
-            - 'packages/kubernetes/listmonk.yaml'
-            - '.github/**'
+            - '.github/workflows/**'
 
   build-api:
     name: Build API
@@ -50,16 +44,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Get the certificate
-        run: 'echo "$NLR_CA" > ${{github.workspace}}/ca.pem'
-        shell: bash
-        env:
-          NLR_CA: ${{secrets.NLR_CA}}
-
-      # - name: Copy cert to trust local registry
-      #   shell: bash
-      #   run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
-
       - name: Set up Docker context for Buildx
         id: buildx-context
         run: docker context create builders || docker context use builders
@@ -68,14 +52,11 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           endpoint: builders
-          config-inline: |
-            [registry."registry.k8s1.flat.nathanrignall.uk:5000"]
-            ca=["${{github.workspace}}/ca.pem"]
 
       - name: Login to registry
         uses: docker/login-action@v2
         with:
-          registry: registry.k8s1.flat.nathanrignall.uk:5000
+          registry: registry.nlr.app
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
@@ -86,8 +67,8 @@ jobs:
           file: apps/api/Dockerfile
           platforms: linux/arm64
           tags: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-api:latest
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-api:${{ github.sha }}
+            registry.nlr.app/oscar-ox-dev-api:latest
+            registry.nlr.app/oscar-ox-dev-api:${{ github.sha }}
           secrets: |
             "github-token=${{ secrets.GITHUB_TOKEN }}"
 
@@ -101,16 +82,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Get the certificate
-        run: 'echo "$NLR_CA" > ${{github.workspace}}/ca.pem'
-        shell: bash
-        env:
-          NLR_CA: ${{secrets.NLR_CA}}
-      
-      # - name: Copy cert to trust local registry
-      #   shell: bash
-      #   run: 'sudo sh ${{github.workspace}}/packages/scripts/cert.sh'
-
       - name: Set up Docker context for Buildx
         id: buildx-context
         run: docker context create builders || docker context use builders
@@ -119,14 +90,11 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           endpoint: builders
-          config-inline: |
-            [registry."registry.k8s1.flat.nathanrignall.uk:5000"]
-            ca=["${{github.workspace}}/ca.pem"]
 
       - name: Login to registry
         uses: docker/login-action@v2
         with:
-          registry: registry.k8s1.flat.nathanrignall.uk:5000
+          registry: registry.nlr.app
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
@@ -137,8 +105,8 @@ jobs:
           file: apps/web/Dockerfile
           platforms: linux/arm64
           tags: |
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:latest
-            registry.k8s1.flat.nathanrignall.uk:5000/oscar-ox-dev-web:${{ github.sha }}
+            registry.nlr.app/oscar-ox-dev-web:latest
+            registry.nlr.app/oscar-ox-dev-web:${{ github.sha }}
           secrets: |
             "github-token=${{ secrets.GITHUB_TOKEN }}"
           build-args: |
