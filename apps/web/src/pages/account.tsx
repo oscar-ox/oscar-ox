@@ -62,7 +62,8 @@ const User = () => {
   return (
     <div>
       <div className="mb-10 text-2xl font-bold text-slate-900 ">
-        {user.loggedIn && "Welcome " + user.firstName + " " + user.lastName + "!"}
+        {user.loggedIn &&
+          "Welcome " + user.firstName + " " + user.lastName + "!"}
       </div>
     </div>
   );
@@ -72,6 +73,7 @@ const Page: NextPage = () => {
   return (
     <DefaultLayout title="Oscar Ox - Account">
       <User />
+      <br />
       <Sessions />
     </DefaultLayout>
   );
